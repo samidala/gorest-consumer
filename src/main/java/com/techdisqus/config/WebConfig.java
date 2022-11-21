@@ -11,7 +11,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 @EnableWebMvc
 @Configuration
-@ComponentScan("com.javachinna")
+@ComponentScan("com.techdisqus")
 public class WebConfig implements WebMvcConfigurer {
 
     @Override

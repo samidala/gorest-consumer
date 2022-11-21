@@ -1,4 +1,15 @@
-package com.techdisqus.dto;
+package com.techdisqus.dto.validators;
 
-public class CreatePostRequestValidator {
+import com.techdisqus.dto.CreatePostRequest;
+
+import javax.validation.ConstraintValidator;
+import javax.validation.ConstraintValidatorContext;
+
+public class CreatePostRequestValidator
+        implements ConstraintValidator<CreatePostRequestConstraint, CreatePostRequest> {
+    @Override
+    public boolean isValid(CreatePostRequest createPostRequest,
+                           ConstraintValidatorContext constraintValidatorContext) {
+        return false;
+    }
 }

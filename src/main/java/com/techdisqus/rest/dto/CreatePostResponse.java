@@ -1,15 +1,26 @@
 package com.techdisqus.rest.dto;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.NoArgsConstructor;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.techdisqus.dto.Response;
+import lombok.*;
 
-@Builder
+//@Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class CreatePostDto {
+@Setter
+@Getter
+//@JsonIgnoreProperties(ignoreUnknown = true)
+public class CreatePostResponse {
+    //@JsonProperty("id")
     private long id;
-    private String userId;
+    @JsonProperty("user_id")
+    private long userId;
     private String title;
     private String body;
+
+    public Response get(){
+        return Response
+                .builder().postBody(body).userId(userId).postTitle(title).build();
+    }
 }
