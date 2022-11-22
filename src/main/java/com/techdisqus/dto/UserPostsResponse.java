@@ -11,7 +11,7 @@ import java.util.Set;
 @Setter
 public class UserPostsResponse {
 
-    private Map<Long, Set<Response>> userPosts;
+    private Map<Long, Set<UserPostDetails>> userPosts;
     private int usersWithoutPosts;
     private int postsWithoutUsers;
     private int usersWithPosts;

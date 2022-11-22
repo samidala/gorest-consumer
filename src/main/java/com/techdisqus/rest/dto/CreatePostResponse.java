@@ -1,7 +1,7 @@
 package com.techdisqus.rest.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.techdisqus.dto.Response;
+import com.techdisqus.dto.UserPostDetails;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -17,8 +17,8 @@ public class CreatePostResponse {
 
 
 
-    public Response get(){
-        return Response
+    public UserPostDetails get(){
+        return UserPostDetails
                 .builder().postBody(body).userId(userId).postTitle(title).build();
     }
 }

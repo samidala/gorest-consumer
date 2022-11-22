@@ -1,5 +1,9 @@
 package com.techdisqus.config;
 import org.springframework.web.servlet.support.AbstractAnnotationConfigDispatcherServletInitializer;
+
+/**
+ * creates spring web application
+ */
 public class SpringWebInitializer extends AbstractAnnotationConfigDispatcherServletInitializer {
 
     @Override

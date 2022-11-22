@@ -1,19 +1,19 @@
 package com.techdisqus.controller;
 
 import com.techdisqus.dto.CreatePostRequest;
-import com.techdisqus.dto.Response;
+import com.techdisqus.dto.UserPostDetails;
 import com.techdisqus.dto.UserPostsResponse;
-import com.techdisqus.dto.validators.CreatePostRequestValidator;
 import com.techdisqus.service.UserPostService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+
+import javax.validation.Valid;
 
 @RestController
 @RequestMapping("/v1")
@@ -25,7 +25,7 @@ public class UserPostResource {
     private UserPostService userPostService;
 
     @PostMapping("/createpost")
-    public ResponseEntity<Response> createComment(
+    public ResponseEntity<UserPostDetails> createComment(@Valid
                                                       @RequestBody CreatePostRequest createPostRequest){
         return ResponseEntity.ok(userPostService.createPost(createPostRequest));
     }

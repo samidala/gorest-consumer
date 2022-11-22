@@ -4,8 +4,7 @@ import com.techdisqus.dto.CreatePostRequest;
 import com.techdisqus.exceptions.ErrorCodes;
 import com.techdisqus.exceptions.InvalidInputException;
 import com.techdisqus.exceptions.RequestExecutionException;
-import com.techdisqus.rest.dto.CreateUserDto;
-import com.techdisqus.rest.dto.User;
+import com.techdisqus.rest.dto.UserDto;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -55,11 +54,11 @@ public class UserServiceHelper {
      * Based on the count the requests will be batched and each batch will fetch 100 requests and it is configurable in application.properties
      * @return
      */
-    public List<Future<List<User>>> getUserListFutures() {
+    public List<Future<List<UserDto>>> getUserListFutures() {
         try {
             int count = restHelperUtils.getCount(userListUrl);
             int itr = RestHelperUtils.getIterationCount(count);
-            List<Callable<List<User>>> callables = new ArrayList<>();
+            List<Callable<List<UserDto>>> callables = new ArrayList<>();
             AtomicInteger counter = new AtomicInteger(1);
             for(int i = 1; i <= itr; i++){
                 callables.add(() -> getUsersFromTargetSystem(counter));
@@ -76,14 +75,14 @@ public class UserServiceHelper {
      * @param userFutures
      * @return
      */
-    public List<User> getUserList(List<Future<List<User>>> userFutures) {
+    public List<UserDto> getUserList(List<Future<List<UserDto>>> userFutures) {
         try {
-            List<User> users = new ArrayList<>(userFutures.size() * 100);
+            List<UserDto> userDtos = new ArrayList<>(userFutures.size() * 100);
 
-            for(Future<List<User>> f : userFutures){
-                users.addAll(f.get());
+            for(Future<List<UserDto>> f : userFutures){
+                userDtos.addAll(f.get());
             }
-            return users;
+            return userDtos;
         } catch (InterruptedException | ExecutionException e) {
             throw new RequestExecutionException(e,ErrorCodes.ERROR_FETCHING_USERS);
         }
@@ -93,35 +92,35 @@ public class UserServiceHelper {
      * @param request
      * @return
      */
-    public User createUser(CreatePostRequest request){
+    public UserDto createUser(CreatePostRequest request){
         WebTarget webTarget = client.target(userCreateUrl);
         Invocation.Builder invocationBuilder =  webTarget.request(MediaType.APPLICATION_JSON);
         invocationBuilder.header("Authorization","Bearer "+accessToken);
-        User user;
-        CreateUserDto createUserDto = CreateUserDto.createUserDto(request);
-        validateEntity(createUserDto);
-        Response resp = invocationBuilder.post(Entity.entity(createUserDto,
+        UserDto userDto;
+        UserDto user = UserDto.toUser(request);
+        validateEntity(user);
+        Response resp = invocationBuilder.post(Entity.entity(user,
                                     MediaType.APPLICATION_JSON));
         restHelperUtils.validateCreateResponse(resp,ErrorCodes.ERROR_CREATING_USER);
-        user = resp.readEntity(User.class);
-        log.debug("user created successfully for email id {} and id is {}",request.getEmail(),user.getId());
-        return user;
+        userDto = resp.readEntity(UserDto.class);
+        log.debug("user created successfully for email id {} and id is {}",request.getEmail(), userDto.getId());
+        return userDto;
     }
     /**
      * Query target system by email ID and return optional of user
      * @param emailId to be queried
      * @return optional of user
      */
-    public Optional<User> getUserDetailsByMailId(String emailId)  {
+    public Optional<UserDto> getUserDetailsByMailId(String emailId)  {
         Invocation.Builder invocationBuilder = restHelperUtils.buildRequest(findUserByMailUrl + emailId);
         javax.ws.rs.core.Response resp = invocationBuilder.get();
         RestHelperUtils.checkResponseStatus(resp,ErrorCodes.ERROR_VALIDATING_EMAIL);
-        List<User> users = resp.readEntity(new GenericType<List<User>>() {});
+        List<UserDto> userDtos = resp.readEntity(new GenericType<List<UserDto>>() {});
 
-        Optional<User> optionalUser = users == null || users.isEmpty() ?
-                Optional.empty() : users.stream().filter(user -> user.getEmail().equals(emailId)).findFirst();
+        Optional<UserDto> optionalUser = userDtos == null || userDtos.isEmpty() ?
+                Optional.empty() : userDtos.stream().filter(userDto -> userDto.getEmail().equals(emailId)).findFirst();
         log.info("user exists {} for email id {}",optionalUser.isPresent(),emailId);
-        return users == null || users.isEmpty() ? Optional.empty() : users.stream().filter(user -> user.getEmail().equals(emailId)).findFirst();
+        return userDtos == null || userDtos.isEmpty() ? Optional.empty() : userDtos.stream().filter(userDto -> userDto.getEmail().equals(emailId)).findFirst();
 
     }
 
@@ -130,27 +129,27 @@ public class UserServiceHelper {
      * @param counter
      * @return
      */
-    private List<User> getUsersFromTargetSystem(AtomicInteger counter) {
+    private List<UserDto> getUsersFromTargetSystem(AtomicInteger counter) {
         String url = userListUrl+"?per_page="+countPerPage+"&page="+ counter.getAndIncrement();
         log.debug("url::: {}",url);
         Response response = restHelperUtils.buildRequest(url).get();
         RestHelperUtils.checkResponseStatus(response, ErrorCodes.ERROR_WHILE_GETTING_COUNT);
-        return response.readEntity(new GenericType<List<User>>() {});
+        return response.readEntity(new GenericType<List<UserDto>>() {});
     }
 
     /**
      * Validates user create input before sending to target system
-     * @param createUserDto
+     * @param userDto
      */
-    private void validateEntity(CreateUserDto createUserDto) {
+    private void validateEntity(UserDto userDto) {
         Set<ErrorCodes> errorCodes = new HashSet<>();
-        if(!StringUtils.hasText(createUserDto.getEmail())){
+        if(!StringUtils.hasText(userDto.getEmail())){
             errorCodes.add(ErrorCodes.ERROR_MISSING_EMAIL);
         }
-        if(createUserDto.getGender() == null){
+        if(userDto.getGender() == null){
             errorCodes.add(ErrorCodes.ERROR_MISSING_GENDER);
         }
-        if(!StringUtils.hasText(createUserDto.getName())){
+        if(!StringUtils.hasText(userDto.getName())){
             errorCodes.add(ErrorCodes.ERROR_MISSING_NAME);
         }
         if(!errorCodes.isEmpty()){

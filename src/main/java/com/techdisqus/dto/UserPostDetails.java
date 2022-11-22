@@ -8,7 +8,7 @@ import lombok.Getter;
 @Builder(toBuilder = true)
 @AllArgsConstructor
 @Getter
-public class Response implements Comparable<Response>{
+public class UserPostDetails implements Comparable<UserPostDetails>{
     private long userId;
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private long postId;
@@ -21,7 +21,7 @@ public class Response implements Comparable<Response>{
 
 
     @Override
-    public int compareTo(Response that) {
+    public int compareTo(UserPostDetails that) {
         return (int) (this.getPostId() - that.getPostId());
     }
 }

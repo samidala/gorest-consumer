@@ -1,7 +1,5 @@
 package com.techdisqus.exceptions;
 
-import com.techdisqus.dto.Error;
-
 import java.util.HashMap;
 import java.util.Map;
 

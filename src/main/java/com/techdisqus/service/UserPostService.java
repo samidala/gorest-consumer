@@ -1,11 +1,8 @@
 package com.techdisqus.service;
 
 import com.techdisqus.dto.CreatePostRequest;
-import com.techdisqus.dto.Response;
+import com.techdisqus.dto.UserPostDetails;
 import com.techdisqus.dto.UserPostsResponse;
-
-import java.util.Map;
-import java.util.Set;
 
 public interface UserPostService {
 
@@ -16,7 +13,7 @@ public interface UserPostService {
      * @param request
      * @return
      */
-    Response createPost(CreatePostRequest request);
+    UserPostDetails createPost(CreatePostRequest request);
 
     /**
      * fetches all the posts from target system

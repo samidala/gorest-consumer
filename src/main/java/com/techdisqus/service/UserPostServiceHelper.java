@@ -4,8 +4,7 @@ import com.techdisqus.dto.CreatePostRequest;
 import com.techdisqus.exceptions.ErrorCodes;
 import com.techdisqus.exceptions.RequestExecutionException;
 import com.techdisqus.rest.dto.CreatePostResponse;
-import com.techdisqus.rest.dto.User;
-import com.techdisqus.rest.dto.UserPost;
+import com.techdisqus.rest.dto.UserDto;
 import com.techdisqus.rest.dto.UserPostDto;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -57,11 +56,11 @@ public class UserPostServiceHelper {
      * Invokes userposts read call in batches in multiple threads
      * @return
      */
-    public List<Future<List<UserPost>>> getUserPostsFutures() {
+    public List<Future<List<UserPostDto>>> getUserPostsFutures() {
         try {
             int count = restHelperUtils.getCount(allPostsUrl);
             int itr = RestHelperUtils.getIterationCount(count);
-            List<Callable<List<UserPost>>> callables = new ArrayList<>();
+            List<Callable<List<UserPostDto>>> callables = new ArrayList<>();
             AtomicInteger counter = new AtomicInteger(1);
             for(int i = 1; i <= itr; i++){
                 callables.add(() -> processUserPostFutures(counter));
@@ -77,15 +76,16 @@ public class UserPostServiceHelper {
      * first it queries the target system by email, if found user user ID to create the post
      * if not, it creates the user in target system, and creates the user post
      * @param request
-     * @param user
+     * @param userDto
      * @return
      */
-    public CreatePostResponse createUserPost(CreatePostRequest request, User user) {
-        WebTarget webTarget = client.target(userPostUrl.replace("${userId}", user.getId()+""));//.path("employees");
+    public CreatePostResponse createUserPost(CreatePostRequest request, UserDto userDto) {
+        WebTarget webTarget = client.target(userPostUrl.replace("${userId}", userDto.getId()+""));//.path("employees");
         Invocation.Builder invocationBuilder =  webTarget.request(MediaType.APPLICATION_JSON);
         invocationBuilder.header("Authorization","Bearer "+accessToken);
 
-        javax.ws.rs.core.Response resp = invocationBuilder.post(Entity.entity(UserPostDto.userPostDto(request),
+        Response resp = invocationBuilder
+                .post(Entity.entity(UserPostDto.toUserPost(request),
                 MediaType.APPLICATION_JSON_TYPE));
         restHelperUtils.validateCreateResponse(resp,ErrorCodes.ERROR_CREATING_USER_POST);
         CreatePostResponse createPostResponse = resp.readEntity(CreatePostResponse.class);
@@ -100,14 +100,14 @@ public class UserPostServiceHelper {
      * @param postsFutures
      * @return
      */
-    public List<UserPost> getUserPostList(List<Future<List<UserPost>>> postsFutures) {
+    public List<UserPostDto> getUserPostList(List<Future<List<UserPostDto>>> postsFutures) {
         try {
 
-            List<UserPost> userPosts = new ArrayList<>(postsFutures.size() * 100);
-            for(Future<List<UserPost>> f : postsFutures){
-                userPosts.addAll(f.get());
+            List<UserPostDto> userPostDtos = new ArrayList<>(postsFutures.size() * 100);
+            for(Future<List<UserPostDto>> f : postsFutures){
+                userPostDtos.addAll(f.get());
             }
-            return userPosts;
+            return userPostDtos;
         } catch (InterruptedException | ExecutionException e) {
             throw new RequestExecutionException(e,ErrorCodes.ERROR_FETCHING_USER_POSTS);
         }
@@ -117,13 +117,13 @@ public class UserPostServiceHelper {
      * @param counter
      * @return
      */
-    private List<UserPost> processUserPostFutures(AtomicInteger counter) {
+    private List<UserPostDto> processUserPostFutures(AtomicInteger counter) {
         String url = allPostsUrl
                 + "?per_page=" + countPerPage + "&page=" + counter.getAndIncrement();
         log.info("url for getting user posts {}",url);
         javax.ws.rs.core.Response response = restHelperUtils.buildRequest(url).get();
         checkResponseStatus(response, ErrorCodes.ERROR_FETCHING_USER_POSTS);
-        return response.readEntity(new GenericType<List<UserPost>>() {});
+        return response.readEntity(new GenericType<List<UserPostDto>>() {});
     }
 
 }

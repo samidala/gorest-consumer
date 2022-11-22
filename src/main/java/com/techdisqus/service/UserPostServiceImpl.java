@@ -1,11 +1,11 @@
 package com.techdisqus.service;
 
 import com.techdisqus.dto.CreatePostRequest;
-import com.techdisqus.dto.Response;
+import com.techdisqus.dto.UserPostDetails;
 import com.techdisqus.dto.UserPostsResponse;
 import com.techdisqus.rest.dto.CreatePostResponse;
-import com.techdisqus.rest.dto.User;
-import com.techdisqus.rest.dto.UserPost;
+import com.techdisqus.rest.dto.UserDto;
+import com.techdisqus.rest.dto.UserPostDto;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,9 +32,9 @@ public class UserPostServiceImpl implements UserPostService{
 
     @Autowired
     private UserPostServiceHelper userPostServiceHelper;
-    private final User EMPTY = new User();
+    private final UserDto EMPTY = new UserDto();
 
-    private static final Comparator<Response> SORT_BY_POST_ID = (o1, o2) -> (int) (o1.getPostId() - o2.getPostId());
+    private static final Comparator<UserPostDetails> SORT_BY_POST_ID = (o1, o2) -> (int) (o1.getPostId() - o2.getPostId());
 
 
     /**
@@ -44,17 +44,17 @@ public class UserPostServiceImpl implements UserPostService{
      * @return
      */
     @Override
-    public Response createPost(CreatePostRequest request){
+    public UserPostDetails createPost(CreatePostRequest request){
 
-        Optional<User> userOptional = userServiceHelper.getUserDetailsByMailId(request.getEmail());
-        User user = userOptional.orElseGet(() -> userServiceHelper.createUser(request));
-        CreatePostResponse createPostResponse = userPostServiceHelper.createUserPost(request, user);
+        Optional<UserDto> userOptional = userServiceHelper.getUserDetailsByMailId(request.getEmail());
+        UserDto userDto = userOptional.orElseGet(() -> userServiceHelper.createUser(request));
+        CreatePostResponse createPostResponse = userPostServiceHelper.createUserPost(request, userDto);
         log.info("post created successfully {}",createPostResponse.getId());
-        return createPostResponse.get().toBuilder().userId(user.getId())
-                .userGender(user.getGender())
-                .userName(user.getName())
-                .userEmail(user.getEmail())
-                .status(user.getStatus()).build();
+        return createPostResponse.get().toBuilder().userId(userDto.getId())
+                .userGender(userDto.getGender())
+                .userName(userDto.getName())
+                .userEmail(userDto.getEmail())
+                .status(userDto.getStatus()).build();
 
     }
 
@@ -64,16 +64,16 @@ public class UserPostServiceImpl implements UserPostService{
      */
     @Override
     public UserPostsResponse getAllPosts() {
-        List<Future<List<User>>> userFutures = userServiceHelper.getUserListFutures();
-        List<Future<List<UserPost>>> postsFutures = userPostServiceHelper.getUserPostsFutures();
-        List<User> users = userServiceHelper.getUserList(userFutures);
-        Map<Long,User> userToIdMapping = users.stream().collect(Collectors.toMap(
-                                                User::getId, Function.identity()));
-        List<UserPost> posts = userPostServiceHelper.getUserPostList(postsFutures);
+        List<Future<List<UserDto>>> userFutures = userServiceHelper.getUserListFutures();
+        List<Future<List<UserPostDto>>> postsFutures = userPostServiceHelper.getUserPostsFutures();
+        List<UserDto> userDtos = userServiceHelper.getUserList(userFutures);
+        Map<Long, UserDto> userToIdMapping = userDtos.stream().collect(Collectors.toMap(
+                                                UserDto::getId, Function.identity()));
+        List<UserPostDto> posts = userPostServiceHelper.getUserPostList(postsFutures);
         UserPostsResponse userPostsResponse = new UserPostsResponse();
-        Map<Long,Set<Response>> userPosts = transformUserPostsResponse(posts, userToIdMapping,userPostsResponse);
+        Map<Long,Set<UserPostDetails>> userPosts = transformUserPostsResponse(posts, userToIdMapping,userPostsResponse);
         userPostsResponse.setUsersWithPosts(userPosts.size());
-        userPostsResponse.setUsersWithoutPosts(users.size() - userPosts.size());
+        userPostsResponse.setUsersWithoutPosts(userDtos.size() - userPosts.size());
         userPostsResponse.setUserPosts(userPosts);
         return userPostsResponse;
 
@@ -86,16 +86,16 @@ public class UserPostServiceImpl implements UserPostService{
      * @param userPostsResponse
      * @return
      */
-    private HashMap<Long, Set<Response>> transformUserPostsResponse(List<UserPost> posts,
-                                                                    Map<Long, User> userToIdMapping,
-                                                                    UserPostsResponse userPostsResponse) {
+    private HashMap<Long, Set<UserPostDetails>> transformUserPostsResponse(List<UserPostDto> posts,
+                                                                           Map<Long, UserDto> userToIdMapping,
+                                                                           UserPostsResponse userPostsResponse) {
         return posts.stream().map(post -> buildResponse(post, userToIdMapping, userPostsResponse))
-                .collect(Collectors.groupingBy(Response::getUserId, HashMap::new,
+                .collect(Collectors.groupingBy(UserPostDetails::getUserId, HashMap::new,
                 Collectors.toCollection(this::getUserPostsSet)));
     }
 
 
-    private TreeSet<Response> getUserPostsSet(){
+    private TreeSet<UserPostDetails> getUserPostsSet(){
         return new TreeSet<>(SORT_BY_POST_ID);
     }
 
@@ -106,32 +106,32 @@ public class UserPostServiceImpl implements UserPostService{
      * @param userPostsResponse
      * @return
      */
-    private Response buildResponse(UserPost post, Map<Long, User> userToIdMapping,
-                                   UserPostsResponse userPostsResponse) {
-        User user = EMPTY;
+    private UserPostDetails buildResponse(UserPostDto post, Map<Long, UserDto> userToIdMapping,
+                                          UserPostsResponse userPostsResponse) {
+        UserDto userDto = EMPTY;
         if(post.getUserId() != null) {
             userPostsResponse.incrementPostsWithoutUsers();
-            user = userToIdMapping.getOrDefault(post.getUserId(), EMPTY);
+            userDto = userToIdMapping.getOrDefault(post.getUserId(), EMPTY);
         }
-        return buildResponse(post, user);
+        return buildResponse(post, userDto);
     }
 
     /**
      * builds awareX response
      * @param post
-     * @param user
+     * @param userDto
      * @return
      */
-    private Response buildResponse(UserPost post, User user) {
-        return Response.builder()
+    private UserPostDetails buildResponse(UserPostDto post, UserDto userDto) {
+        return UserPostDetails.builder()
                 .postBody(post.getBody())
                 .postId(post.getId())
                 .postTitle(post.getTitle())
                 .userId(post.getUserId())
-                .userName(user.getName())
-                .status(user.getStatus())
-                .userEmail(user.getEmail())
-                .userGender(user.getGender())
+                .userName(userDto.getName())
+                .status(userDto.getStatus())
+                .userEmail(userDto.getEmail())
+                .userGender(userDto.getGender())
                 .build();
     }
 }

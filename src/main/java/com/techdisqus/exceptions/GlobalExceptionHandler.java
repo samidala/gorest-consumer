@@ -32,7 +32,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         ex.getConstraintViolations().forEach(
                 con -> sb.append(con.getMessage())
         );
-        log.error("constraints failed {} ",sb,ex);
+        log.error("error details, constraints failed {} ",sb,ex);
 
         return new ResponseEntity<>(
                 ErrorDetails.builder()
@@ -57,7 +57,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     @ExceptionHandler({RequestExecutionException.class})
     public ResponseEntity<Object> handleRequestExecFailedException(
             RequestExecutionException ex, WebRequest request) {
-        log.error("constraints failed ",ex);
+        log.error("error details ",ex);
 
 
         return createErrorResponse(ex);
