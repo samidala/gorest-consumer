@@ -67,7 +67,8 @@ public class UserPostServiceImpl implements UserPostService{
         List<Future<List<User>>> userFutures = userServiceHelper.getUserListFutures();
         List<Future<List<UserPost>>> postsFutures = userPostServiceHelper.getUserPostsFutures();
         List<User> users = userServiceHelper.getUserList(userFutures);
-        Map<Long,User> userToIdMapping = getUserToIdMapping(users);
+        Map<Long,User> userToIdMapping = users.stream().collect(Collectors.toMap(
+                                                User::getId, Function.identity()));
         List<UserPost> posts = userPostServiceHelper.getUserPostList(postsFutures);
         UserPostsResponse userPostsResponse = new UserPostsResponse();
         Map<Long,Set<Response>> userPosts = transformUserPostsResponse(posts, userToIdMapping,userPostsResponse);
@@ -76,17 +77,6 @@ public class UserPostServiceImpl implements UserPostService{
         userPostsResponse.setUserPosts(userPosts);
         return userPostsResponse;
 
-    }
-
-    /**
-     * creates a map with user ID as key and user as value
-     * @param users
-     * @return
-     */
-    private Map<Long, User> getUserToIdMapping(List<User> users) {
-        return users.stream().collect(Collectors.toMap(
-                User::getId, Function.identity()
-        ));
     }
 
     /**
@@ -99,15 +89,12 @@ public class UserPostServiceImpl implements UserPostService{
     private HashMap<Long, Set<Response>> transformUserPostsResponse(List<UserPost> posts,
                                                                     Map<Long, User> userToIdMapping,
                                                                     UserPostsResponse userPostsResponse) {
-        return posts.stream().map(post -> getResponse(post, userToIdMapping, userPostsResponse)
-        ).collect(Collectors.groupingBy(Response::getUserId, HashMap::new,
+        return posts.stream().map(post -> buildResponse(post, userToIdMapping, userPostsResponse))
+                .collect(Collectors.groupingBy(Response::getUserId, HashMap::new,
                 Collectors.toCollection(this::getUserPostsSet)));
     }
 
-    /**
-     * sort the user posts of user by post ID
-     * @return
-     */
+
     private TreeSet<Response> getUserPostsSet(){
         return new TreeSet<>(SORT_BY_POST_ID);
     }
@@ -119,14 +106,12 @@ public class UserPostServiceImpl implements UserPostService{
      * @param userPostsResponse
      * @return
      */
-    private Response getResponse(UserPost post, Map<Long, User> userToIdMapping,
-                                 UserPostsResponse userPostsResponse) {
+    private Response buildResponse(UserPost post, Map<Long, User> userToIdMapping,
+                                   UserPostsResponse userPostsResponse) {
         User user = EMPTY;
-        if(post.getUserId() != null)
-             user = userToIdMapping.getOrDefault(post.getUserId(), EMPTY);
-
-        if(user.equals(EMPTY)){
+        if(post.getUserId() != null) {
             userPostsResponse.incrementPostsWithoutUsers();
+            user = userToIdMapping.getOrDefault(post.getUserId(), EMPTY);
         }
         return buildResponse(post, user);
     }
