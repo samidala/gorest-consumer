@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 
+import java.util.Collection;
 import java.util.Map;
 import java.util.Set;
 
@@ -15,5 +16,5 @@ import java.util.Set;
 public class ErrorDetails {
     private Map<String,String> errorCodes;
     private String error;
-    private Set<String> errors;
+    private Collection<String> errors;
 }

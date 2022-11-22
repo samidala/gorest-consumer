@@ -1,10 +1,13 @@
 package com.techdisqus.exceptions;
 
 
+import com.fasterxml.jackson.databind.exc.InvalidFormatException;
 import com.techdisqus.dto.ErrorDetails;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.context.request.WebRequest;
@@ -69,6 +72,22 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
                                 .collect(Collectors.toSet()))
                         .errorCodes(buildErrorMessages())
                         .build(), HttpStatus.BAD_REQUEST);
+    }
+    @Override
+    public ResponseEntity<Object> handleHttpMessageNotReadable(HttpMessageNotReadableException exception,
+                                                               HttpHeaders headers, HttpStatus status, WebRequest request) {
+        String errors = "Unacceptable JSON " + exception.getMessage();
+
+        if (exception.getCause() instanceof InvalidFormatException) {
+            InvalidFormatException ifx = (InvalidFormatException) exception.getCause();
+            if (ifx.getTargetType()!=null && ifx.getTargetType().isEnum()) {
+                errors = String.format("Invalid enum value: '%s' for the field: '%s'. The value must be one of: %s.",
+                        ifx.getValue(), ifx.getPath().get(ifx.getPath().size()-1).getFieldName(), Arrays.toString(ifx.getTargetType().getEnumConstants()));
+            }
+        }
+        log.error("error details {}",errors);
+        return handleExceptionInternal(exception, ErrorDetails.builder()
+                .error(ErrorCodes.ERROR_INVALID_GENDER.getErrorCode()).errorCodes(buildErrorMessages()).build(), headers, HttpStatus.BAD_REQUEST, request);
     }
 
 

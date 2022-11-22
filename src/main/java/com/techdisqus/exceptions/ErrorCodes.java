@@ -26,6 +26,7 @@ public enum ErrorCodes {
 
     BAD_REQUEST("1303",
             "bad request"),
+    ERROR_AUTH_FAILED("1305","Authorization error"),
     ERROR_WHILE_GETTING_COUNT("1304",
             "Error while getting the count"),
 
@@ -35,6 +36,8 @@ public enum ErrorCodes {
     ERROR_MISSING_STATUS("1403","missing status"),
     ERROR_INVALID_STATUS("1404","Invalid status, valid values are active and inactive"),
     ERROR_INVALID_GENDER("1405","Invalid gender, valid values are male and female"),
+
+    INTERNAL_SERVER_ERROR("1500","Internal server error")
     ;
     private final String errorCode;
     private final Map<String,String> errorDetails = new HashMap<>();

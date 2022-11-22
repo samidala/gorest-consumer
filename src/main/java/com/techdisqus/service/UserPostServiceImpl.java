@@ -185,8 +185,15 @@ public class UserPostServiceImpl implements UserPostService{
         WebTarget webTarget = client.target(userPostUrl.replace("${userId}", user.getId()+""));//.path("employees");
         Invocation.Builder invocationBuilder =  webTarget.request(MediaType.APPLICATION_JSON);
         invocationBuilder.header("Authorization","Bearer "+accessToken);
-        CreatePostResponse createPostResponse = invocationBuilder.post(Entity.entity(UserPostDto.userPostDto(request),
-                MediaType.APPLICATION_JSON_TYPE), CreatePostResponse.class);
+
+        javax.ws.rs.core.Response resp = invocationBuilder.post(Entity.entity(UserPostDto.userPostDto(request),
+                MediaType.APPLICATION_JSON_TYPE));
+        if(resp.getStatus() == 401){
+            throw new RequestExecutionException(ErrorCodes.ERROR_AUTH_FAILED);
+        }else if(resp.getStatus() != 200){
+            throw new RequestExecutionException(ErrorCodes.ERROR_CREATING_USER);
+        }
+        CreatePostResponse createPostResponse = resp.readEntity(CreatePostResponse.class);
         log.debug("response id {} ",createPostResponse.getId());
         return createPostResponse;
     }
@@ -199,6 +206,9 @@ public class UserPostServiceImpl implements UserPostService{
         User user;
         javax.ws.rs.core.Response resp = invocationBuilder.post(getEntity(CreateUserDto.createUserDto(request)));
         if(resp.getStatus()!= 200){
+            if(resp.getStatus() == 401){
+                throw new RequestExecutionException(ErrorCodes.ERROR_AUTH_FAILED);
+            }
             throw new RequestExecutionException(ErrorCodes.ERROR_CREATING_USER);
         }else{
             user = resp.readEntity(User.class);
