@@ -19,11 +19,11 @@ public class RestHelperUtils {
     /**
      * validates response status, if it is not 200, error will be thrown
      * @param response
-     * @param errorFetchingUserPosts
+     * @param errorCode
      */
-    public static void checkResponseStatus(javax.ws.rs.core.Response response, ErrorCodes errorFetchingUserPosts) {
+    public static void checkResponseStatus(javax.ws.rs.core.Response response, ErrorCodes errorCode) {
         if(response.getStatus() != 200){
-            throw new RequestExecutionException(errorFetchingUserPosts);
+            throw new RequestExecutionException(errorCode);
         }
     }
 
@@ -61,6 +61,11 @@ public class RestHelperUtils {
         return itr;
     }
 
+    /**
+     * validates the response for create requests
+     * @param resp
+     * @param errorCodes
+     */
     public void validateCreateResponse(Response resp,ErrorCodes errorCodes) {
         if(resp.getStatus() == 401){
             throw new RequestExecutionException(ErrorCodes.ERROR_AUTH_FAILED);

@@ -1,12 +1,10 @@
 package com.techdisqus.rest.dto;
 
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.util.Objects;
 
-@NoArgsConstructor
 @Getter
 @Setter
 public class User {

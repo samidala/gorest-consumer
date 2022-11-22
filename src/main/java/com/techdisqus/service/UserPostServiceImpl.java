@@ -149,7 +149,4 @@ public class UserPostServiceImpl implements UserPostService{
                 .userGender(user.getGender())
                 .build();
     }
-
-
-
 }

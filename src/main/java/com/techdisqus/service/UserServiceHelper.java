@@ -115,28 +115,14 @@ public class UserServiceHelper {
     public Optional<User> getUserDetailsByMailId(String emailId)  {
         Invocation.Builder invocationBuilder = restHelperUtils.buildRequest(findUserByMailUrl + emailId);
         javax.ws.rs.core.Response resp = invocationBuilder.get();
-        List<User> users;
-        users = validateAndGetUsers(resp);
+        RestHelperUtils.checkResponseStatus(resp,ErrorCodes.ERROR_VALIDATING_EMAIL);
+        List<User> users = resp.readEntity(new GenericType<List<User>>() {});
+
         Optional<User> optionalUser = users == null || users.isEmpty() ?
                 Optional.empty() : users.stream().filter(user -> user.getEmail().equals(emailId)).findFirst();
         log.info("user exists {} for email id {}",optionalUser.isPresent(),emailId);
         return users == null || users.isEmpty() ? Optional.empty() : users.stream().filter(user -> user.getEmail().equals(emailId)).findFirst();
 
-    }
-
-    /**
-     * Validates the rest call status and gets user list
-     * @param resp
-     * @return
-     */
-    private List<User> validateAndGetUsers(javax.ws.rs.core.Response resp) {
-        List<User> users;
-        if(resp.getStatus()!= 200){
-            throw new RequestExecutionException(ErrorCodes.ERROR_VALIDATING_EMAIL);
-        }else{
-            users = resp.readEntity(new GenericType<List<User>>() {});
-        }
-        return users;
     }
 
     /**
@@ -147,8 +133,7 @@ public class UserServiceHelper {
     private List<User> getUsersFromTargetSystem(AtomicInteger counter) {
         String url = userListUrl+"?per_page="+countPerPage+"&page="+ counter.getAndIncrement();
         log.debug("url::: {}",url);
-
-        javax.ws.rs.core.Response response = restHelperUtils.buildRequest(url).get();
+        Response response = restHelperUtils.buildRequest(url).get();
         RestHelperUtils.checkResponseStatus(response, ErrorCodes.ERROR_WHILE_GETTING_COUNT);
         return response.readEntity(new GenericType<List<User>>() {});
     }
