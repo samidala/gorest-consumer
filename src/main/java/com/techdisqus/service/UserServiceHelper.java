@@ -157,4 +157,11 @@ public class UserServiceHelper {
         }
     }
 
+    public void setRestHelperUtils(RestHelperUtils restHelperUtils) {
+        this.restHelperUtils = restHelperUtils;
+    }
+
+    public void setClient(Client client) {
+        this.client = client;
+    }
 }

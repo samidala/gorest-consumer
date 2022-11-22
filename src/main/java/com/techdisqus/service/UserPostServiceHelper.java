@@ -52,6 +52,14 @@ public class UserPostServiceHelper {
     @Value(("${rest.service.access.token}"))
     private String accessToken;
 
+    protected void setRestHelperUtils(RestHelperUtils restHelperUtils) {
+        this.restHelperUtils = restHelperUtils;
+    }
+
+    protected void setClient(Client client) {
+        this.client = client;
+    }
+
     /**
      * Invokes userposts read call in batches in multiple threads
      * @return
@@ -117,11 +125,11 @@ public class UserPostServiceHelper {
      * @param counter
      * @return
      */
-    private List<UserPostDto> processUserPostFutures(AtomicInteger counter) {
+    protected List<UserPostDto> processUserPostFutures(AtomicInteger counter) {
         String url = allPostsUrl
                 + "?per_page=" + countPerPage + "&page=" + counter.getAndIncrement();
         log.info("url for getting user posts {}",url);
-        javax.ws.rs.core.Response response = restHelperUtils.buildRequest(url).get();
+        Response response = restHelperUtils.buildRequest(url).get();
         checkResponseStatus(response, ErrorCodes.ERROR_FETCHING_USER_POSTS);
         return response.readEntity(new GenericType<List<UserPostDto>>() {});
     }

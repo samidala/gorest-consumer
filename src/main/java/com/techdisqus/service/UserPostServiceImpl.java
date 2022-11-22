@@ -32,6 +32,15 @@ public class UserPostServiceImpl implements UserPostService{
 
     @Autowired
     private UserPostServiceHelper userPostServiceHelper;
+
+    public void setUserPostServiceHelper(UserPostServiceHelper userPostServiceHelper) {
+        this.userPostServiceHelper = userPostServiceHelper;
+    }
+
+    public void setUserServiceHelper(UserServiceHelper userServiceHelper) {
+        this.userServiceHelper = userServiceHelper;
+    }
+
     private final UserDto EMPTY = new UserDto();
 
     private static final Comparator<UserPostDetails> SORT_BY_POST_ID = (o1, o2) -> (int) (o1.getPostId() - o2.getPostId());

@@ -16,15 +16,21 @@ public class RestHelperUtils {
 
     @Autowired
     private Client client;
+
+    public void setClient(Client client) {
+        this.client = client;
+    }
+
     /**
      * validates response status, if it is not 200, error will be thrown
      * @param response
      * @param errorCode
      */
-    public static void checkResponseStatus(javax.ws.rs.core.Response response, ErrorCodes errorCode) {
-        if(response.getStatus() != 200){
+    public static boolean checkResponseStatus(Response response, ErrorCodes errorCode) {
+        if(response.getStatus() != 200 && response.getStatus() != 0){
             throw new RequestExecutionException(errorCode);
         }
+        return true;
     }
 
     /**
@@ -46,8 +52,7 @@ public class RestHelperUtils {
      * @return
      */
     public Invocation.Builder buildRequest(String url) {
-        WebTarget webTarget = client.target(url);
-        return webTarget.request(MediaType.APPLICATION_JSON);
+        return client.target(url).request(MediaType.APPLICATION_JSON);
     }
 
     /**
