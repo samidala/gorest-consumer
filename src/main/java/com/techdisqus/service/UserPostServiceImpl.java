@@ -26,7 +26,15 @@ import javax.ws.rs.client.Invocation;
 import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.GenericType;
 import javax.ws.rs.core.MediaType;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
+import java.util.TreeSet;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
@@ -93,7 +101,7 @@ public class UserPostServiceImpl implements UserPostService{
         Map<Long,User> userToIdMapping = getUserToIdMapping(users);
         List<UserPost> posts = getUserPostList(postsFutures);
         UserPostsResponse userPostsResponse = new UserPostsResponse();
-        Map<Long,Set<Response>> userPosts = trasnfromUserPostsResponse(posts, userToIdMapping,userPostsResponse);
+        Map<Long,Set<Response>> userPosts = transformUserPostsResponse(posts, userToIdMapping,userPostsResponse);
         userPostsResponse.setUsersWithPosts(userPosts.size());
         userPostsResponse.setUsersWithoutPosts(users.size() - userPosts.size());
         userPostsResponse.setUserPosts(userPosts);
@@ -148,7 +156,7 @@ public class UserPostServiceImpl implements UserPostService{
         ));
     }
 
-    private HashMap<Long, Set<Response>> trasnfromUserPostsResponse(List<UserPost> posts,
+    private HashMap<Long, Set<Response>> transformUserPostsResponse(List<UserPost> posts,
                                                                     Map<Long, User> userToIdMapping,
                                                                     UserPostsResponse userPostsResponse) {
         return posts.stream().map(post -> getResponse(post, userToIdMapping, userPostsResponse)
@@ -208,7 +216,7 @@ public class UserPostServiceImpl implements UserPostService{
         Invocation.Builder invocationBuilder =  webTarget.request(MediaType.APPLICATION_JSON);
         invocationBuilder.header("Authorization","Bearer "+accessToken);
         User user;
-        javax.ws.rs.core.Response resp = invocationBuilder.post(getEntity(CreateUserDto.createUserDto(request)));
+        javax.ws.rs.core.Response resp = invocationBuilder.post(validateAndGetEntity(CreateUserDto.createUserDto(request)));
         if(resp.getStatus()!= 201){
             if(resp.getStatus() == 401){
                 throw new RequestExecutionException(ErrorCodes.ERROR_AUTH_FAILED);
@@ -222,8 +230,14 @@ public class UserPostServiceImpl implements UserPostService{
         return user;
     }
 
-    private Entity<CreateUserDto> getEntity( CreateUserDto createUserDto) {
+    private Entity<CreateUserDto> validateAndGetEntity(CreateUserDto createUserDto) {
 
+        validateEntity(createUserDto);
+        return Entity.entity(createUserDto,
+                MediaType.APPLICATION_JSON);
+    }
+
+    private void validateEntity(CreateUserDto createUserDto) {
         Set<ErrorCodes> errorCodes = new HashSet<>();
         if(!StringUtils.hasText(createUserDto.getEmail())){
             errorCodes.add(ErrorCodes.ERROR_MISSING_EMAIL);
@@ -237,8 +251,6 @@ public class UserPostServiceImpl implements UserPostService{
         if(!errorCodes.isEmpty()){
             throw new InvalidInputException(errorCodes);
         }
-        return Entity.entity(createUserDto,
-                MediaType.APPLICATION_JSON);
     }
 
     protected Optional<User> getUserDetailsByMailId(String emailId)  {
@@ -299,13 +311,11 @@ public class UserPostServiceImpl implements UserPostService{
     private List<User> fetchUsers(AtomicInteger counter) {
         String url = userListUrl+"?per_page="+countPerPage+"&page="+ getAndIncrement(counter);
         log.debug("url::: {}",url);
-        try{
-            javax.ws.rs.core.Response response = buildRequest(url).get();
-            checkResponseStatus(response, ErrorCodes.ERROR_FETCHING_USERS);
-            return response.readEntity(new GenericType<List<User>>() {});
-        }catch (Exception e){
-            throw new RequestExecutionException(e,ErrorCodes.ERROR_FETCHING_USERS);
-        }
+
+        javax.ws.rs.core.Response response = buildRequest(url).get();
+        checkResponseStatus(response, ErrorCodes.ERROR_FETCHING_USERS);
+        return response.readEntity(new GenericType<List<User>>() {});
+
 
     }
 
