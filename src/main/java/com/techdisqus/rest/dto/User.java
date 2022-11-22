@@ -9,7 +9,7 @@ import java.util.Objects;
 @NoArgsConstructor
 @Getter
 @Setter
-public class    User {
+public class User {
     private long id;
     private String email;
 
