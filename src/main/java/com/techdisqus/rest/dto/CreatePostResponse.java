@@ -1,23 +1,21 @@
 package com.techdisqus.rest.dto;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.techdisqus.dto.Response;
-import lombok.*;
+import lombok.Getter;
+import lombok.Setter;
 
-//@Builder
-@AllArgsConstructor
-@NoArgsConstructor
+
 @Setter
 @Getter
-//@JsonIgnoreProperties(ignoreUnknown = true)
 public class CreatePostResponse {
-    //@JsonProperty("id")
-    private long id;
+    private Long id;
     @JsonProperty("user_id")
     private long userId;
     private String title;
     private String body;
+
+
 
     public Response get(){
         return Response

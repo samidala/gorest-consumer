@@ -5,7 +5,6 @@ import lombok.*;
 import java.util.Map;
 import java.util.Set;
 
-@Builder
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
@@ -17,13 +16,7 @@ public class UserPostsResponse {
     private int postsWithoutUsers;
     private int usersWithPosts;
 
-   /* public void incrementUserWithoutPosts(){
-        usersWithoutPosts++;
-    }*/
     public void incrementPostsWithoutUsers(){
         postsWithoutUsers++;
-    }
-    public void incrementUsersWithPosts(){
-        usersWithPosts++;
     }
 }

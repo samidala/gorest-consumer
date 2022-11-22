@@ -4,11 +4,54 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="054ef415-1a3b-48ba-9818-ab3999bd50cb" name="Changes" comment="" />
+    <list default="true" id="054ef415-1a3b-48ba-9818-ab3999bd50cb" name="Changes" comment="initial commit">
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/techdisqus/config/AutherizationMapper.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/techdisqus/config/UnprocessableEntityMapper.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/techdisqus/dto/ErrorDetails.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/techdisqus/exceptions/ErrorCodes.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/techdisqus/exceptions/GlobalExceptionHandler.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/techdisqus/exceptions/InvalidInputException.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/techdisqus/exceptions/RequestExecutionException.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/resources/logback.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/pom.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/techdisqus/config/AppConfig.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/techdisqus/config/AppConfig.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/techdisqus/controller/UserPostResource.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/techdisqus/controller/UserPostResource.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/techdisqus/dto/CreatePostRequest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/techdisqus/dto/CreatePostRequest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/techdisqus/dto/Response.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/techdisqus/dto/Response.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/techdisqus/dto/Result.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/techdisqus/dto/UserPostsResponse.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/techdisqus/dto/UserPostsResponse.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/techdisqus/rest/dto/CreatePostResponse.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/techdisqus/rest/dto/CreatePostResponse.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/techdisqus/rest/dto/CreateUserDto.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/techdisqus/rest/dto/CreateUserDto.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/techdisqus/service/UserPostServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/techdisqus/service/UserPostServiceImpl.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/application.properties" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/application.properties" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Enum" />
+        <option value="AnnotationType" />
+        <option value="Class" />
+      </list>
+    </option>
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="LogFilters">
+    <option name="FILTER_ERRORS" value="false" />
+    <option name="FILTER_WARNINGS" value="false" />
+    <option name="FILTER_INFO" value="true" />
+    <option name="FILTER_DEBUG" value="true" />
+    <option name="CUSTOM_FILTER" />
+  </component>
+  <component name="MarkdownSettingsMigration">
+    <option name="stateVersion" value="1" />
   </component>
   <component name="ProjectId" id="2Hr04G0XDSXxXxX8KfyBUWvqOWa" />
   <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
@@ -16,12 +59,94 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "RunOnceActivity.OpenProjectViewOnStart": "true",
-    "RunOnceActivity.ShowReadmeOnStart": "true"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
+    &quot;last_opened_file_path&quot;: &quot;D:/projects/practice/rest-client-backend&quot;,
+    &quot;project.structure.last.edited&quot;: &quot;Libraries&quot;,
+    &quot;project.structure.proportion&quot;: &quot;0.0&quot;,
+    &quot;project.structure.side.proportion&quot;: &quot;0.2&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.pluginManager&quot;
   }
-}]]></component>
+}</component>
+  <component name="RecentsManager">
+    <key name="CopyClassDialog.RECENTS_KEY">
+      <recent name="com.techdisqus.config" />
+      <recent name="com.techdisqus.service" />
+    </key>
+  </component>
+  <component name="RunManager" selected="Smart Tomcat.smart-jersey">
+    <configuration name="CreatePostRequest" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
+      <option name="MAIN_CLASS_NAME" value="com.techdisqus.dto.CreatePostRequest" />
+      <module name="rest-client-backend" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="com.techdisqus.dto.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="GlobalExceptionHandler" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
+      <option name="MAIN_CLASS_NAME" value="com.techdisqus.exceptions.GlobalExceptionHandler" />
+      <module name="rest-client-backend" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="com.techdisqus.exceptions.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="tomcat-jersey" type="TomcatRunner-By-Camtwo" factoryName="TomcatRunConfiguration">
+      <option name="TomcatRunnerV001-Modules" value="{&quot;modules&quot;:[]}" />
+      <option name="TomcatRunnerV001-TomcatInstallation" value="$PROJECT_DIR$/../../apache-tomcat-9.0.69" />
+      <option name="TomcatRunnerV001-VmArgs" value="" />
+      <option name="TomcatRunnerV001-PassParentEnvVars" value="false" />
+      <option name="TomcatRunnerV001-CleanTmpWork" value="false" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="smart-jersey" type="com.poratu.idea.plugins.tomcat">
+      <predefined_log_file enabled="true" id="Tomcat Localhost Log" />
+      <predefined_log_file enabled="true" id="Tomcat Access Log" />
+      <predefined_log_file id="Tomcat Catalina Log" />
+      <predefined_log_file id="Tomcat Manager Log" />
+      <predefined_log_file id="Tomcat Host Manager Log" />
+      <option name="contextPath" value="" />
+      <option name="docBase" value="D:\projects\practice\rest-client-backend" />
+      <option name="tomcatInfo">
+        <TomcatInfo>
+          <option name="name" value="Apache Tomcat/9.0.69" />
+          <option name="path" value="$PROJECT_DIR$/../../apache-tomcat-9.0.69" />
+          <option name="version" value="9.0.69.0" />
+        </TomcatInfo>
+      </option>
+      <option name="vmOptions" value="" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <list>
+      <item itemvalue="Application.CreatePostRequest" />
+      <item itemvalue="Application.GlobalExceptionHandler" />
+      <item itemvalue="Smart Tomcat.smart-jersey" />
+      <item itemvalue="Tomcat Runner.tomcat-jersey" />
+    </list>
+    <recent_temporary>
+      <list>
+        <item itemvalue="Application.CreatePostRequest" />
+        <item itemvalue="Application.GlobalExceptionHandler" />
+      </list>
+    </recent_temporary>
+  </component>
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="TaskManager">
     <task active="true" id="Default" summary="Default task">
@@ -31,6 +156,14 @@
       <option name="presentableId" value="Default" />
       <updated>1669027707904</updated>
     </task>
+    <task id="LOCAL-00001" summary="initial commit">
+      <created>1669066866046</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1669066866046</updated>
+    </task>
+    <option name="localTasksCounter" value="2" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -43,5 +176,60 @@
         </entry>
       </map>
     </option>
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="initial commit" />
+    <option name="LAST_COMMIT_MESSAGE" value="initial commit" />
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint type="java-line">
+          <url>file://$PROJECT_DIR$/src/main/java/com/techdisqus/service/UserPostServiceImpl.java</url>
+          <line>274</line>
+          <option name="timeStamp" value="25" />
+        </line-breakpoint>
+        <line-breakpoint type="java-line">
+          <url>file://$PROJECT_DIR$/src/main/java/com/techdisqus/service/UserPostServiceImpl.java</url>
+          <line>89</line>
+          <option name="timeStamp" value="29" />
+        </line-breakpoint>
+        <line-breakpoint type="java-line">
+          <url>file://$PROJECT_DIR$/src/main/java/com/techdisqus/service/UserPostServiceImpl.java</url>
+          <line>311</line>
+          <option name="timeStamp" value="30" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/main/java/com/techdisqus/config/UnprocessableEntityMapper.java</url>
+          <line>15</line>
+          <option name="timeStamp" value="31" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/main/java/com/techdisqus/service/UserPostServiceImpl.java</url>
+          <line>225</line>
+          <option name="timeStamp" value="35" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/main/java/com/techdisqus/exceptions/GlobalExceptionHandler.java</url>
+          <line>42</line>
+          <option name="timeStamp" value="36" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/main/java/com/techdisqus/exceptions/GlobalExceptionHandler.java</url>
+          <line>62</line>
+          <option name="timeStamp" value="39" />
+        </line-breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
+    <pin-to-top-manager>
+      <pinned-members>
+        <PinnedItemInfo parentTag="com.fasterxml.jackson.databind.exc.MismatchedInputException" memberName="cause" />
+      </pinned-members>
+    </pin-to-top-manager>
+    <watches-manager>
+      <configuration name="com.poratu.idea.plugins.tomcat">
+        <watch expression="userPosts.entrySet().stream().filter((en) -&gt; en.getValue().size() &gt; 1).map(en -&gt; en.getKey()).collect(Collectors.toList())" language="JAVA" custom="java.util.stream.Collectors" />
+      </configuration>
+    </watches-manager>
   </component>
 </project>

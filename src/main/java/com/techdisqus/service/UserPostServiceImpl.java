@@ -3,14 +3,21 @@ package com.techdisqus.service;
 import com.techdisqus.dto.CreatePostRequest;
 import com.techdisqus.dto.Response;
 import com.techdisqus.dto.UserPostsResponse;
-import com.techdisqus.rest.dto.*;
-import javafx.geometry.Pos;
-import lombok.SneakyThrows;
-//import lombok.extern.slf4j.Slf4j;
+import com.techdisqus.exceptions.ErrorCodes;
+import com.techdisqus.exceptions.InvalidInputException;
+import com.techdisqus.exceptions.RequestExecutionException;
+import com.techdisqus.rest.dto.CreatePostResponse;
+import com.techdisqus.rest.dto.CreateUserDto;
+import com.techdisqus.rest.dto.User;
+import com.techdisqus.rest.dto.UserPost;
+import com.techdisqus.rest.dto.UserPostDto;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
+import org.springframework.util.StringUtils;
 
+import javax.validation.*;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.client.Invocation;
@@ -19,13 +26,14 @@ import javax.ws.rs.core.GenericType;
 import javax.ws.rs.core.MediaType;
 import java.util.*;
 import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-//@Slf4j
+@Slf4j
 @Component
 public class UserPostServiceImpl implements UserPostService{
 
@@ -46,20 +54,26 @@ public class UserPostServiceImpl implements UserPostService{
 
     @Value("${service.count.per.page}")
     private String countPerPage;
+
+    @Value(("${rest.service.access.token}"))
+    private String accessToken;
+
     @Autowired
     private Client client;
 
     @Autowired
     private ExecutorService executorService;
+    private final User EMPTY = new User();
+
+    private static final Comparator<Response> SORT_BY_POST_ID = (o1, o2) -> (int) (o1.getPostId() - o2.getPostId());
 
     @Override
     public Response createPost(CreatePostRequest request){
 
         Optional<User> userOptional = getUserDetailsByMailId(request.getEmail());
-        User user;
-        user = userOptional.orElseGet(() -> createUser(request));
-        //.orElse(createUser(request));
+        User user = userOptional.orElseGet(() -> createUser(request));
         CreatePostResponse createPostResponse = createUserPost(request, user);
+        log.info("post created successfully {}",createPostResponse.getId());
         return createPostResponse.get().toBuilder().userId(user.getId())
                 .userGender(user.getGender())
                 .userName(user.getName())
@@ -68,30 +82,60 @@ public class UserPostServiceImpl implements UserPostService{
 
     }
 
-    private final User EMPTY = new User();
-
-
-    @SneakyThrows
     @Override
     public UserPostsResponse getAllPosts() {
-
-
-        /*Future<List<User>> usersFetchFuture = executorService.submit(this::getUsers);
-        Future<List<UserPost>> postsFetchFuture = executorService.submit(this::getPosts);
-        List<User> users = usersFetchFuture.get();
+        List<Future<List<User>>> userFutures = getUserListFutures();
+        List<Future<List<UserPost>>> postsFutures = getUserPostsFutures();
+        List<User> users = getUserList(userFutures);
         Map<Long,User> userToIdMapping = getUserToIdMapping(users);
-        List<UserPost> posts = postsFetchFuture.get();*/
-
-        List<User> users = getUsers();
-        Map<Long,User> userToIdMapping = getUserToIdMapping(users);
-        List<UserPost> posts = getPosts();
+        List<UserPost> posts = getUserPostList(postsFutures);
         UserPostsResponse userPostsResponse = new UserPostsResponse();
-        Map<Long,Set<Response>> userPosts = processPostsResponse(posts, userToIdMapping,userPostsResponse);
-
-        userPostsResponse.setUsersWithPosts(posts.size() - userPostsResponse.getUsersWithoutPosts());
+        Map<Long,Set<Response>> userPosts = trasnfromUserPostsResponse(posts, userToIdMapping,userPostsResponse);
+        userPostsResponse.setUsersWithPosts(userPosts.size());
+        userPostsResponse.setUsersWithoutPosts(users.size() - userPosts.size());
         userPostsResponse.setUserPosts(userPosts);
         return userPostsResponse;
 
+    }
+
+    private List<Future<List<UserPost>>> getUserPostsFutures() {
+        List<Future<List<UserPost>>> postsFutures;
+        try {
+            postsFutures = prepareAndExecUserPostCalls();
+        } catch (InterruptedException e) {
+            throw new RequestExecutionException(e,ErrorCodes.ERROR_FETCHING_USER_POSTS);
+        }
+        return postsFutures;
+    }
+
+    private List<Future<List<User>>> getUserListFutures() {
+        List<Future<List<User>>> userFutures;
+        try {
+            userFutures = prepareAndExecAllUsersCall();
+        } catch (InterruptedException e) {
+            throw new RequestExecutionException(e,ErrorCodes.ERROR_FETCHING_USERS);
+        }
+        return userFutures;
+    }
+
+    private List<UserPost> getUserPostList(List<Future<List<UserPost>>> postsFutures) {
+        List<UserPost> posts;
+        try {
+            posts = getUserPosts(postsFutures);
+        } catch (InterruptedException | ExecutionException e) {
+            throw new RequestExecutionException(e,ErrorCodes.ERROR_FETCHING_USER_POSTS);
+        }
+        return posts;
+    }
+
+    private List<User> getUserList(List<Future<List<User>>> userFutures) {
+        List<User> users;
+        try {
+            users = getUsers(userFutures);
+        } catch (InterruptedException | ExecutionException e) {
+            throw new RequestExecutionException(e,ErrorCodes.ERROR_FETCHING_USERS);
+        }
+        return users;
     }
 
     private Map<Long, User> getUserToIdMapping(List<User> users) {
@@ -100,17 +144,16 @@ public class UserPostServiceImpl implements UserPostService{
         ));
     }
 
-    private HashMap<Long, Set<Response>> processPostsResponse(List<UserPost> posts,
-                                                        Map<Long, User> userToIdMapping,
-                                                        UserPostsResponse userPostsResponse) {
-        return posts.stream().map(post -> getResponse(post, userToIdMapping,userPostsResponse)
+    private HashMap<Long, Set<Response>> trasnfromUserPostsResponse(List<UserPost> posts,
+                                                                    Map<Long, User> userToIdMapping,
+                                                                    UserPostsResponse userPostsResponse) {
+        return posts.stream().map(post -> getResponse(post, userToIdMapping, userPostsResponse)
         ).collect(Collectors.groupingBy(Response::getUserId, HashMap::new,
                 Collectors.toCollection(this::getUserPostsSet)));
-                //Collectors.toCollection(TreeSet::new)));
     }
 
     private TreeSet<Response> getUserPostsSet(){
-        return new TreeSet<>(SORT_BY_POST_ID_1);
+        return new TreeSet<>(SORT_BY_POST_ID);
     }
 
     private Response getResponse(UserPost post, Map<Long, User> userToIdMapping,
@@ -121,11 +164,11 @@ public class UserPostServiceImpl implements UserPostService{
 
         if(user.equals(EMPTY)){
             userPostsResponse.incrementPostsWithoutUsers();
-        }else{
-            userPostsResponse.incrementUsersWithPosts();
         }
+        return buildResponse(post, user);
+    }
 
-
+    private Response buildResponse(UserPost post, User user) {
         return Response.builder()
                 .postBody(post.getBody())
                 .postId(post.getId())
@@ -138,137 +181,174 @@ public class UserPostServiceImpl implements UserPostService{
                 .build();
     }
 
-    private static final Comparator<UserPost> SORT_BY_POST_ID = (o1, o2) -> (int) (o1.getId() - o2.getId());
-
-    private static final Comparator<Response> SORT_BY_POST_ID_1 = (o1, o2) -> (int) (o1.getPostId() - o2.getPostId());
-
-    private static final Comparator<UserPost> SORT_BY_USER_ID = (o1, o2) -> (int) (o1.getUserId() - o2.getUserId());
-
-    private static final List<Comparator<UserPost>> comparators = new ArrayList<>();
-    static {
-        comparators.add(SORT_BY_USER_ID);
-        comparators.add(SORT_BY_POST_ID);
-    }
     private CreatePostResponse createUserPost(CreatePostRequest request, User user) {
         WebTarget webTarget = client.target(userPostUrl.replace("${userId}", user.getId()+""));//.path("employees");
         Invocation.Builder invocationBuilder =  webTarget.request(MediaType.APPLICATION_JSON);
-        invocationBuilder.header("Authorization","Bearer 3a6ddfbacd8a61477da76a8be080f536b58ee662086ccbc35f8a5f232ada214d");
+        invocationBuilder.header("Authorization","Bearer "+accessToken);
         CreatePostResponse createPostResponse = invocationBuilder.post(Entity.entity(UserPostDto.userPostDto(request),
                 MediaType.APPLICATION_JSON_TYPE), CreatePostResponse.class);
+        log.debug("response id {} ",createPostResponse.getId());
         return createPostResponse;
     }
 
 
     protected User createUser(CreatePostRequest request){
-        WebTarget webTarget = client.target(userCreateUrl);//.path("employees");
+        WebTarget webTarget = client.target(userCreateUrl);
         Invocation.Builder invocationBuilder =  webTarget.request(MediaType.APPLICATION_JSON);
-        invocationBuilder.header("Authorization","Bearer 3a6ddfbacd8a61477da76a8be080f536b58ee662086ccbc35f8a5f232ada214d");
-        return invocationBuilder.post(Entity.entity(CreateUserDto.createUserDto(request),
-                MediaType.APPLICATION_JSON),User.class);
+        invocationBuilder.header("Authorization","Bearer "+accessToken);
+        User user;
+        javax.ws.rs.core.Response resp = invocationBuilder.post(getEntity(CreateUserDto.createUserDto(request)));
+        if(resp.getStatus()!= 200){
+            throw new RequestExecutionException(ErrorCodes.ERROR_CREATING_USER);
+        }else{
+            user = resp.readEntity(User.class);
+        }
+
+        log.debug("user created successfully for email id {} and id is {}",request.getEmail(),user.getId());
+        return user;
     }
+
+    private Entity<CreateUserDto> getEntity( CreateUserDto createUserDto) {
+
+        Set<ErrorCodes> errorCodes = new HashSet<>();
+        if(!StringUtils.hasText(createUserDto.getEmail())){
+            errorCodes.add(ErrorCodes.ERROR_MISSING_EMAIL);
+        }
+        if(createUserDto.getGender() == null){
+            errorCodes.add(ErrorCodes.ERROR_MISSING_GENDER);
+        }
+        if(!StringUtils.hasText(createUserDto.getName())){
+            errorCodes.add(ErrorCodes.ERROR_MISSING_NAME);
+        }
+        if(!errorCodes.isEmpty()){
+            throw new InvalidInputException(errorCodes);
+        }
+        return Entity.entity(createUserDto,
+                MediaType.APPLICATION_JSON);
+    }
+
     protected Optional<User> getUserDetailsByMailId(String emailId)  {
-        String url = findUserByMailUrl+emailId;
-        WebTarget webTarget = client.target(url);//.path("employees");
-        Invocation.Builder invocationBuilder = webTarget.request(MediaType.APPLICATION_JSON);
-        List<User> users = invocationBuilder.get(new GenericType<List<User>>() {});
+        Invocation.Builder invocationBuilder = buildRequest(findUserByMailUrl + emailId);
+        javax.ws.rs.core.Response resp = invocationBuilder.get();
+        List<User> users;
+        users = getAndValidateStatus(resp);
+        Optional<User> optionalUser = users == null || users.isEmpty() ?
+                Optional.empty() : users.stream().filter(user -> user.getEmail().equals(emailId)).findFirst();
+        log.info("user exists {} for email id {}",optionalUser.isPresent(),emailId);
         return users == null || users.isEmpty() ? Optional.empty() : users.stream().filter(user -> user.getEmail().equals(emailId)).findFirst();
 
     }
 
-    private final int getUserCount(){
+    private List<User> getAndValidateStatus(javax.ws.rs.core.Response resp) {
+        List<User> users;
+        if(resp.getStatus()!= 200){
+            throw new RequestExecutionException(ErrorCodes.ERROR_VALIDATING_EMAIL);
+        }else{
+            users = resp.readEntity(new GenericType<List<User>>() {});
+        }
+        return users;
+    }
+
+    private int getUserCount(){
         return getCount(userListUrl);
     }
 
-    private final int getPostsCount(){
+    private int getPostsCount(){
         return getCount(allPostsUrl);
     }
 
-    private final int getCount(String url){
+    private int getCount(String url){
         WebTarget webTarget = client.target(url);
         Invocation.Builder invocationBuilder = webTarget.request(MediaType.APPLICATION_JSON);
         javax.ws.rs.core.Response response = invocationBuilder.get();
+        checkResponseStatus(response, ErrorCodes.ERROR_WHILE_GETTING_COUNT);
         return Integer.parseInt(response.getHeaders().get("x-pagination-total").get(0).toString());
     }
-    @SneakyThrows
-    private List<User> getUsers() {
+    private List<Future<List<User>>> prepareAndExecAllUsersCall() throws InterruptedException {
         int count = getUserCount();
-        int itr = count / 100;
-        itr = itr + (count % 100 == 0 ? 0 : 1);
+        int itr = getIterationCount(count);
         List<Callable<List<User>>> callables = new ArrayList<>();
-        List<User> users = new ArrayList<>();
         AtomicInteger counter = new AtomicInteger(1);
         for(int i = 1; i <= itr; i++){
-            callables.add(() -> {
-                String url = userListUrl+"?per_page="+countPerPage+"&page="+counter.getAndIncrement();
-                WebTarget webTarget = client.target(url);
-                Invocation.Builder invocationBuilder = webTarget.request(MediaType.APPLICATION_JSON);
-                List<User> list = invocationBuilder.get(new GenericType<List<User>>() {});
-                return list;
-
-            });
+            callables.add(() -> fetchUsers(counter));
         }
-        List<Future<List<User>>> futures = executorService.invokeAll(callables);
+        return executorService.invokeAll(callables);
+    }
+
+    private int getIterationCount(int count) {
+        int itr = count / 100;
+        itr = itr + (count % 100 == 0 ? 0 : 1);
+        return itr;
+    }
+
+
+    private List<User> fetchUsers(AtomicInteger counter) {
+        String url = userListUrl+"?per_page="+countPerPage+"&page="+ getAndIncrement(counter);
+        log.debug("url::: {}",url);
+        try{
+            javax.ws.rs.core.Response response = buildRequest(url).get();
+            checkResponseStatus(response, ErrorCodes.ERROR_FETCHING_USERS);
+            return response.readEntity(new GenericType<List<User>>() {});
+        }catch (Exception e){
+            throw new RequestExecutionException(e,ErrorCodes.ERROR_FETCHING_USERS);
+        }
+
+    }
+
+    private int getAndIncrement(final AtomicInteger counter) {
+        synchronized (counter) {
+            return counter.getAndIncrement();
+        }
+    }
+
+
+    private List<User> getUsers(List<Future<List<User>>> futures) throws InterruptedException, ExecutionException {
+        List<User> users = new ArrayList<>(futures.size() * 100);
+
         for(Future<List<User>> f : futures){
             users.addAll(f.get());
         }
-
-       /*
-        String url = userListUrl+"per_page="+countPerPage+"&page="+pageNo;
-        WebTarget webTarget = client.target(url);//.path("employees");
-        Invocation.Builder invocationBuilder = webTarget.request(MediaType.APPLICATION_JSON);
-        javax.ws.rs.core.Response response = invocationBuilder.get();
-        System.out.println(response.getHeaders());
-
-        while (true) {
-            url = userListUrl+"per_page="+countPerPage+"&page="+pageNo;
-             webTarget = client.target(url);//.path("employees");
-            invocationBuilder = webTarget.request(MediaType.APPLICATION_JSON);
-            List<User> list = invocationBuilder.get(new GenericType<List<User>>() {});
-            if(list.isEmpty()) break;
-            users.addAll(list);
-            pageNo++;
-        }*/
         return users;
     }
 
 
-    @SneakyThrows
-    private List<UserPost> getPosts() {
 
-
-        List<UserPost> userPosts = new ArrayList<>();
-
+    private List<Future<List<UserPost>>> prepareAndExecUserPostCalls() throws InterruptedException {
         int count = getPostsCount();
-        int itr = count / 100;
-        itr = itr + (count % 100 == 0 ? 0 : 1);
+        int itr = getIterationCount(count);
         List<Callable<List<UserPost>>> callables = new ArrayList<>();
         AtomicInteger counter = new AtomicInteger(1);
         for(int i = 1; i <= itr; i++){
-            callables.add(() -> {
-                String url = allPostsUrl+"?per_page="+countPerPage+"&page="+counter.getAndIncrement();
-                WebTarget webTarget = client.target(url);
-                Invocation.Builder invocationBuilder = webTarget.request(MediaType.APPLICATION_JSON);
-                List<UserPost> list = invocationBuilder.get(new GenericType<List<UserPost>>() {});
-                return list;
-
-            });
+            callables.add(() -> getUserPosts(counter));
         }
-        List<Future<List<UserPost>>> futures = executorService.invokeAll(callables);
+        return executorService.invokeAll(callables);
+    }
+
+    private List<UserPost> getUserPosts(AtomicInteger counter) {
+        String url = allPostsUrl
+                + "?per_page=" + countPerPage + "&page=" + getAndIncrement(counter);
+        log.info("url for getting user posts {}",url);
+        javax.ws.rs.core.Response response = buildRequest(url).get();
+        checkResponseStatus(response, ErrorCodes.ERROR_FETCHING_USER_POSTS);
+        return response.readEntity(new GenericType<List<UserPost>>() {});
+    }
+
+    private void checkResponseStatus(javax.ws.rs.core.Response response, ErrorCodes errorFetchingUserPosts) {
+        if(response.getStatus() != 200){
+            throw new RequestExecutionException(errorFetchingUserPosts);
+        }
+    }
+
+    private Invocation.Builder buildRequest(String url) {
+        WebTarget webTarget = client.target(url);
+        return webTarget.request(MediaType.APPLICATION_JSON);
+    }
+
+    private List<UserPost> getUserPosts(List<Future<List<UserPost>>> futures) throws InterruptedException, ExecutionException {
+        List<UserPost> userPosts = new ArrayList<>(futures.size() * 100);
         for(Future<List<UserPost>> f : futures){
             userPosts.addAll(f.get());
         }
-       /* while (true) {
-            String url = allPostsUrl +"per_page="+countPerPage+"&page="+pageNo;;
-            WebTarget webTarget = client.target(url);//.path("employees");
-            Invocation.Builder invocationBuilder = webTarget.request(MediaType.APPLICATION_JSON);
-            List<UserPost> list = invocationBuilder.get(new GenericType<List<UserPost>>() {});
-            if(list.isEmpty()) break;
-            userPosts.addAll(list);
-            pageNo++;
-        }
-*/
         return userPosts;
     }
-
-
 }

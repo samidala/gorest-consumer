@@ -7,6 +7,9 @@ import lombok.Setter;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotNull;
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @NoArgsConstructor
 @Getter
@@ -14,7 +17,7 @@ import javax.validation.constraints.NotNull;
 public class CreatePostRequest {
 
     public enum Gender{
-        MALE,FEMALE,OTHERS
+        MALE,FEMALE
     }
     private String name;
 
@@ -26,5 +29,11 @@ public class CreatePostRequest {
     private String title;
     @NotNull()
     private String body;
+
+    public static void main(String[] args) {
+        List<String> list = Arrays.asList("Java", "Java-8", "Java Streams", "Concurrency");
+        System.out.println(list.stream()
+                .collect(Collectors.joining("\n")));
+    }
 
 }
