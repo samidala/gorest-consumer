@@ -3,7 +3,9 @@ package com.techdisqus.exceptions;
 
 import com.fasterxml.jackson.databind.exc.InvalidFormatException;
 import com.techdisqus.dto.ErrorDetails;
-import lombok.extern.slf4j.Slf4j;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -19,9 +21,9 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 @ControllerAdvice
-@Slf4j
-public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
+public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
+    private static Logger log = LoggerFactory.getLogger(GlobalExceptionHandler.class);
     @ExceptionHandler({ConstraintViolationException.class})
     public ResponseEntity<Object> handleConstraintFailureException(
             ConstraintViolationException ex, WebRequest request) {

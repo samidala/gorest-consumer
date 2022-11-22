@@ -18,5 +18,9 @@ public interface UserPostService {
      */
     Response createPost(CreatePostRequest request);
 
+    /**
+     * fetches all the posts from target system
+     * @return
+     */
     UserPostsResponse getAllPosts();
 }

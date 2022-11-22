@@ -11,13 +11,15 @@ import com.techdisqus.rest.dto.CreateUserDto;
 import com.techdisqus.rest.dto.User;
 import com.techdisqus.rest.dto.UserPost;
 import com.techdisqus.rest.dto.UserPostDto;
-import lombok.extern.slf4j.Slf4j;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
-import javax.validation.*;
+
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.client.Invocation;
@@ -33,10 +35,10 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-@Slf4j
 @Component
 public class UserPostServiceImpl implements UserPostService{
 
+    private static Logger log = LoggerFactory.getLogger(UserPostServiceImpl.class);
 
     @Value("${service.user.create.url}")
     private String userCreateUrl;
@@ -66,6 +68,7 @@ public class UserPostServiceImpl implements UserPostService{
     private final User EMPTY = new User();
 
     private static final Comparator<Response> SORT_BY_POST_ID = (o1, o2) -> (int) (o1.getPostId() - o2.getPostId());
+
 
     @Override
     public Response createPost(CreatePostRequest request){
@@ -98,7 +101,8 @@ public class UserPostServiceImpl implements UserPostService{
 
     }
 
-    private List<Future<List<UserPost>>> getUserPostsFutures() {
+
+    protected List<Future<List<UserPost>>> getUserPostsFutures() {
         List<Future<List<UserPost>>> postsFutures;
         try {
             postsFutures = prepareAndExecUserPostCalls();
@@ -190,7 +194,7 @@ public class UserPostServiceImpl implements UserPostService{
                 MediaType.APPLICATION_JSON_TYPE));
         if(resp.getStatus() == 401){
             throw new RequestExecutionException(ErrorCodes.ERROR_AUTH_FAILED);
-        }else if(resp.getStatus() != 200){
+        }else if(resp.getStatus() != 201){
             throw new RequestExecutionException(ErrorCodes.ERROR_CREATING_USER);
         }
         CreatePostResponse createPostResponse = resp.readEntity(CreatePostResponse.class);
@@ -205,7 +209,7 @@ public class UserPostServiceImpl implements UserPostService{
         invocationBuilder.header("Authorization","Bearer "+accessToken);
         User user;
         javax.ws.rs.core.Response resp = invocationBuilder.post(getEntity(CreateUserDto.createUserDto(request)));
-        if(resp.getStatus()!= 200){
+        if(resp.getStatus()!= 201){
             if(resp.getStatus() == 401){
                 throw new RequestExecutionException(ErrorCodes.ERROR_AUTH_FAILED);
             }
