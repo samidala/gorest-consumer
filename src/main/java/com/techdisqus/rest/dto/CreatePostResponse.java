@@ -17,7 +17,7 @@ public class CreatePostResponse {
 
 
 
-    public UserPostDetails get(){
+    public UserPostDetails toUserPostDetails(){
         return UserPostDetails
                 .builder().postBody(body).userId(userId).postTitle(title).build();
     }

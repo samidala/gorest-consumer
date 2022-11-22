@@ -50,7 +50,7 @@ public class UserPostServiceImpl implements UserPostService{
         UserDto userDto = userOptional.orElseGet(() -> userServiceHelper.createUser(request));
         CreatePostResponse createPostResponse = userPostServiceHelper.createUserPost(request, userDto);
         log.info("post created successfully {}",createPostResponse.getId());
-        return createPostResponse.get().toBuilder().userId(userDto.getId())
+        return createPostResponse.toUserPostDetails().toBuilder().userId(userDto.getId())
                 .userGender(userDto.getGender())
                 .userName(userDto.getName())
                 .userEmail(userDto.getEmail())
