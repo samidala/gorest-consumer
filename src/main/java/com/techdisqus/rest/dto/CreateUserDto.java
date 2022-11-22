@@ -3,9 +3,7 @@ package com.techdisqus.rest.dto;
 import com.techdisqus.dto.CreatePostRequest;
 import lombok.Getter;
 import lombok.Setter;
-import org.springframework.validation.annotation.Validated;
 
-import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
 
