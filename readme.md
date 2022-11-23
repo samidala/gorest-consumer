@@ -53,3 +53,6 @@
 2. Validation in controller layer is not implemented however validations are present in service layer.
 3. The libraries can be upgraded to latest version. 
 4. The junits getting executed when ran manually (single or all) however fails with mvn command and hence disable unit test execution with `mvn clean install -DskipTests=true`
+
+## Assumptions
+1. the user state is not considered while transforming the response while getting the user posts.
