@@ -7,7 +7,6 @@ import com.techdisqus.dto.UserPostsResponse;
 import com.techdisqus.rest.dto.CreatePostResponse;
 import com.techdisqus.rest.dto.UserDto;
 import com.techdisqus.rest.dto.UserPostDto;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mockito;
