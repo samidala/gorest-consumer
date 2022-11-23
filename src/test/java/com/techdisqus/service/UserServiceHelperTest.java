@@ -181,7 +181,7 @@ public class UserServiceHelperTest {
         UserDto res = userServiceHelper.createUser(getCreatePostRequest());
 
         assertEquals(userDto.getEmail(),res.getEmail());
-        assertEquals(123,res.getId());
+        assertEquals(1,res.getId());
         assertEquals(userDto.getName(),res.getName());
         assertEquals(userDto.getGender(),res.getGender());
     }
@@ -194,9 +194,9 @@ public class UserServiceHelperTest {
     }
     private UserDto getUserDto(int i) {
         UserDto userDto = new UserDto();
-        userDto.setId(i);
+        userDto.setId((long) i);
         userDto.setEmail("me@me.com");
-        userDto.setId(123);
+
         return userDto;
     }
 

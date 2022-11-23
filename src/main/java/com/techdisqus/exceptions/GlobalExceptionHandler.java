@@ -3,7 +3,6 @@ package com.techdisqus.exceptions;
 
 import com.fasterxml.jackson.databind.exc.InvalidFormatException;
 import com.techdisqus.dto.ErrorDetails;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpHeaders;
@@ -15,65 +14,58 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
+import javax.annotation.PostConstruct;
 import javax.validation.ConstraintViolationException;
 import java.util.Arrays;
 import java.util.Map;
+import java.util.Set;
+import java.util.TreeMap;
 import java.util.stream.Collectors;
 
-@ControllerAdvice
+import static com.techdisqus.exceptions.ErrorCodes.ERROR_INVALID_GENDER;
 
-public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
+@ControllerAdvice
+public class GlobalExceptionHandler extends ResponseEntityExceptionHandler  {
+
+    private final static Map<String,String> errorCodesInfo = new TreeMap<>();
     private static Logger log = LoggerFactory.getLogger(GlobalExceptionHandler.class);
+
     @ExceptionHandler({ConstraintViolationException.class})
     public ResponseEntity<Object> handleConstraintFailureException(
             ConstraintViolationException ex, WebRequest request) {
 
         StringBuilder sb = new StringBuilder();
-        ex.getConstraintViolations().forEach(
-                con -> sb.append(con.getMessage())
-        );
+        ex.getConstraintViolations().forEach(con -> sb.append(con.getMessage()));
         log.error("error details, constraints failed {} ",sb,ex);
-
         return new ResponseEntity<>(
                 ErrorDetails.builder()
                         .error(ex.getConstraintViolations().toString())
-                        .errorCodes(buildErrorMessages())
-                        .build(), HttpStatus.INTERNAL_SERVER_ERROR);
+                        .errorCodes(errorCodesInfo)
+                        .build(), HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler({Exception.class})
     public ResponseEntity<Object> handleAllOtherExceptions(
             Exception ex, WebRequest request) {
 
-        log.error("constraints failed ",ex);
+        log.error("Error while execution ",ex);
 
-        return new ResponseEntity<>(
-                ErrorDetails.builder()
-                        .error(ex.getMessage())
-                        .errorCodes(buildErrorMessages())
-                        .build(), HttpStatus.INTERNAL_SERVER_ERROR);
+        return response(ErrorCodes.INTERNAL_SERVER_ERROR,HttpStatus.INTERNAL_SERVER_ERROR);
     }
+
 
     @ExceptionHandler({RequestExecutionException.class})
     public ResponseEntity<Object> handleRequestExecFailedException(
             RequestExecutionException ex, WebRequest request) {
         log.error("error details ",ex);
+        return response(ex.getErrorCodes(),HttpStatus.UNPROCESSABLE_ENTITY);
 
-
-        return createErrorResponse(ex);
     }
     @ExceptionHandler({InvalidInputException.class})
     public ResponseEntity<Object> handleInvalidInput(
             InvalidInputException ex, WebRequest request) {
-        log.error("constraints failed ",ex);
-
-
-        return new ResponseEntity<>(
-                ErrorDetails.builder()
-                        .errors(ex.getErrorCodes().stream().map(e -> e.getErrorCode() + "-"+e.getErrorDesc())
-                                .collect(Collectors.toSet()))
-                        .errorCodes(buildErrorMessages())
-                        .build(), HttpStatus.BAD_REQUEST);
+        log.error("invalid user inputs, constraints failed ",ex);
+        return response(ex.getErrorCodes(),HttpStatus.BAD_REQUEST);
     }
     @Override
     public ResponseEntity<Object> handleHttpMessageNotReadable(HttpMessageNotReadableException exception,
@@ -88,18 +80,47 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
             }
         }
         log.error("error details {}",errors);
-        return handleExceptionInternal(exception, ErrorDetails.builder()
-                .error(ErrorCodes.ERROR_INVALID_GENDER.getErrorCode()).errorCodes(buildErrorMessages()).build(), headers, HttpStatus.BAD_REQUEST, request);
+        return response(ERROR_INVALID_GENDER,HttpStatus.BAD_REQUEST);
     }
 
+    private String getError(ErrorCodes errorInvalidGender) {
+        return errorInvalidGender.getErrorCode() + "-" + errorInvalidGender.getErrorDesc();
+    }
+    @PostConstruct
+    public void init(){
+        errorCodesInfo.putAll(buildErrorMessages());
+    }
 
-    private ResponseEntity<Object> createErrorResponse(RequestExecutionException ex) {
+    /**
+     * builds response with error with single error
+     * @param errorCodes
+     * @param status
+     * @return
+     */
+    private ResponseEntity<Object> response(ErrorCodes errorCodes, HttpStatus status){
         return new ResponseEntity<>(
                 ErrorDetails.builder()
-                        .error(ex.getErrorCodes().getErrorCode())
-                        .errorCodes(buildErrorMessages())
-                        .build(), HttpStatus.UNPROCESSABLE_ENTITY);
+                        .error(getError(errorCodes))
+                        .errorCodes(errorCodesInfo)
+                        .errorCode(errorCodes.getErrorCode())
+                        .build(), status);
     }
+
+    /**
+     * builds response with error with multiple validation error
+     * @param errors
+     * @param status
+     * @return
+     */
+    private ResponseEntity<Object> response(Set<ErrorCodes> errors, HttpStatus status){
+        return new ResponseEntity<>(
+                ErrorDetails.builder()
+                        .errors(errors.stream().map(this::getError)
+                                .collect(Collectors.toSet()))
+                        .errorCodes(errorCodesInfo)
+                        .build(), status);
+    }
+
 
     private Map<String,String> buildErrorMessages(){
         return Arrays.stream(ErrorCodes.values()).collect(Collectors.toMap(ErrorCodes::getErrorCode, ErrorCodes::getErrorDesc));

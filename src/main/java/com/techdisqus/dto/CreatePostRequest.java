@@ -3,8 +3,10 @@ package com.techdisqus.dto;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.springframework.validation.annotation.Validated;
 
 import javax.validation.constraints.Email;
+import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import java.util.Arrays;
 import java.util.List;
@@ -12,6 +14,7 @@ import java.util.stream.Collectors;
 
 @Getter
 @Setter
+@Validated
 public class CreatePostRequest {
 
     public enum Gender{
@@ -22,16 +25,12 @@ public class CreatePostRequest {
     private Gender gender;
 
     @Email()
+    @NotEmpty
     private String email;
-    @NotNull()
+    @NotEmpty
     private String title;
-    @NotNull()
+    @NotEmpty
     private String body;
 
-    public static void main(String[] args) {
-        List<String> list = Arrays.asList("Java", "Java-8", "Java Streams", "Concurrency");
-        System.out.println(list.stream()
-                .collect(Collectors.joining("\n")));
-    }
 
 }

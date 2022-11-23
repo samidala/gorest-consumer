@@ -4,27 +4,23 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="054ef415-1a3b-48ba-9818-ab3999bd50cb" name="Changes" comment="initial commit">
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/techdisqus/config/AutherizationMapper.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/techdisqus/config/UnprocessableEntityMapper.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/techdisqus/dto/ErrorDetails.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/techdisqus/exceptions/ErrorCodes.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/techdisqus/exceptions/GlobalExceptionHandler.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/techdisqus/exceptions/InvalidInputException.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/techdisqus/exceptions/RequestExecutionException.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/resources/logback.xml" afterDir="false" />
+    <list default="true" id="054ef415-1a3b-48ba-9818-ab3999bd50cb" name="Changes" comment="Added swagger doc">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/pom.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/com/techdisqus/config/AppConfig.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/techdisqus/config/AppConfig.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/com/techdisqus/controller/UserPostResource.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/techdisqus/controller/UserPostResource.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/com/techdisqus/dto/CreatePostRequest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/techdisqus/dto/CreatePostRequest.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/techdisqus/dto/Response.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/techdisqus/dto/Response.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/techdisqus/dto/Result.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/techdisqus/dto/UserPostsResponse.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/techdisqus/dto/UserPostsResponse.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/techdisqus/rest/dto/CreatePostResponse.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/techdisqus/rest/dto/CreatePostResponse.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/techdisqus/rest/dto/CreateUserDto.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/techdisqus/rest/dto/CreateUserDto.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/techdisqus/dto/ErrorDetails.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/techdisqus/dto/ErrorDetails.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/techdisqus/exceptions/ErrorCodes.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/techdisqus/exceptions/ErrorCodes.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/techdisqus/exceptions/GlobalExceptionHandler.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/techdisqus/exceptions/GlobalExceptionHandler.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/techdisqus/rest/dto/UserDto.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/techdisqus/rest/dto/UserDto.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/techdisqus/service/RestHelperUtils.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/techdisqus/service/RestHelperUtils.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/techdisqus/service/UserPostServiceHelper.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/techdisqus/service/UserPostServiceHelper.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/com/techdisqus/service/UserPostServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/techdisqus/service/UserPostServiceImpl.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/techdisqus/service/UserServiceHelper.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/techdisqus/service/UserServiceHelper.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/resources/application.properties" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/application.properties" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/java/com/techdisqus/service/UserPostServiceHelperTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/com/techdisqus/service/UserPostServiceHelperTest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/java/com/techdisqus/service/UserPostServiceImplTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/com/techdisqus/service/UserPostServiceImplTest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/java/com/techdisqus/service/UserServiceHelperTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/com/techdisqus/service/UserServiceHelperTest.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -53,6 +49,13 @@
   <component name="MarkdownSettingsMigration">
     <option name="stateVersion" value="1" />
   </component>
+  <component name="MavenImportPreferences">
+    <option name="generalSettings">
+      <MavenGeneralSettings>
+        <option name="useMavenConfig" value="true" />
+      </MavenGeneralSettings>
+    </option>
+  </component>
   <component name="ProjectId" id="2Hr04G0XDSXxXxX8KfyBUWvqOWa" />
   <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
   <component name="ProjectViewState">
@@ -63,43 +66,94 @@
   &quot;keyToString&quot;: {
     &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
     &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
     &quot;last_opened_file_path&quot;: &quot;D:/projects/practice/rest-client-backend&quot;,
     &quot;project.structure.last.edited&quot;: &quot;Libraries&quot;,
     &quot;project.structure.proportion&quot;: &quot;0.0&quot;,
     &quot;project.structure.side.proportion&quot;: &quot;0.2&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.pluginManager&quot;
+    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.sourceCode.Java&quot;
   }
 }</component>
   <component name="RecentsManager">
     <key name="CopyClassDialog.RECENTS_KEY">
-      <recent name="com.techdisqus.config" />
       <recent name="com.techdisqus.service" />
+      <recent name="com.techdisqus.config" />
     </key>
   </component>
   <component name="RunManager" selected="Smart Tomcat.smart-jersey">
-    <configuration name="CreatePostRequest" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
-      <option name="MAIN_CLASS_NAME" value="com.techdisqus.dto.CreatePostRequest" />
+    <configuration name="UserPostServiceImplTest.testCreatePost" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
       <module name="rest-client-backend" />
       <extension name="coverage">
         <pattern>
-          <option name="PATTERN" value="com.techdisqus.dto.*" />
+          <option name="PATTERN" value="com.techdisqus.service.*" />
           <option name="ENABLED" value="true" />
         </pattern>
       </extension>
+      <option name="PACKAGE_NAME" value="com.techdisqus.service" />
+      <option name="MAIN_CLASS_NAME" value="com.techdisqus.service.UserPostServiceImplTest" />
+      <option name="METHOD_NAME" value="testCreatePost" />
+      <option name="TEST_OBJECT" value="method" />
       <method v="2">
         <option name="Make" enabled="true" />
       </method>
     </configuration>
-    <configuration name="GlobalExceptionHandler" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
-      <option name="MAIN_CLASS_NAME" value="com.techdisqus.exceptions.GlobalExceptionHandler" />
+    <configuration name="UserPostServiceImplTest.testGetAllUserPosts" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
       <module name="rest-client-backend" />
       <extension name="coverage">
         <pattern>
-          <option name="PATTERN" value="com.techdisqus.exceptions.*" />
+          <option name="PATTERN" value="com.techdisqus.service.*" />
           <option name="ENABLED" value="true" />
         </pattern>
       </extension>
+      <option name="PACKAGE_NAME" value="com.techdisqus.service" />
+      <option name="MAIN_CLASS_NAME" value="com.techdisqus.service.UserPostServiceImplTest" />
+      <option name="METHOD_NAME" value="testGetAllUserPosts" />
+      <option name="TEST_OBJECT" value="method" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="UserServiceHelperTest.testGetUserByMailId" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <module name="rest-client-backend" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="com.techdisqus.service.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <option name="PACKAGE_NAME" value="com.techdisqus.service" />
+      <option name="MAIN_CLASS_NAME" value="com.techdisqus.service.UserServiceHelperTest" />
+      <option name="METHOD_NAME" value="testGetUserByMailId" />
+      <option name="TEST_OBJECT" value="method" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="UserServiceHelperTest.testGetUserByMailIdOnError" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <module name="rest-client-backend" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="com.techdisqus.service.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <option name="PACKAGE_NAME" value="com.techdisqus.service" />
+      <option name="MAIN_CLASS_NAME" value="com.techdisqus.service.UserServiceHelperTest" />
+      <option name="METHOD_NAME" value="testGetUserByMailIdOnError" />
+      <option name="TEST_OBJECT" value="method" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="com.techdisqus.service in rest-client-backend" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <module name="rest-client-backend" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="com.techdisqus.service.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <option name="PACKAGE_NAME" value="com.techdisqus.service" />
+      <option name="TEST_OBJECT" value="package" />
       <method v="2">
         <option name="Make" enabled="true" />
       </method>
@@ -135,15 +189,21 @@
       </method>
     </configuration>
     <list>
-      <item itemvalue="Application.CreatePostRequest" />
-      <item itemvalue="Application.GlobalExceptionHandler" />
+      <item itemvalue="JUnit.UserPostServiceImplTest.testCreatePost" />
+      <item itemvalue="JUnit.UserPostServiceImplTest.testGetAllUserPosts" />
+      <item itemvalue="JUnit.UserServiceHelperTest.testGetUserByMailId" />
+      <item itemvalue="JUnit.UserServiceHelperTest.testGetUserByMailIdOnError" />
+      <item itemvalue="JUnit.com.techdisqus.service in rest-client-backend" />
       <item itemvalue="Smart Tomcat.smart-jersey" />
       <item itemvalue="Tomcat Runner.tomcat-jersey" />
     </list>
     <recent_temporary>
       <list>
-        <item itemvalue="Application.CreatePostRequest" />
-        <item itemvalue="Application.GlobalExceptionHandler" />
+        <item itemvalue="JUnit.com.techdisqus.service in rest-client-backend" />
+        <item itemvalue="JUnit.UserPostServiceImplTest.testGetAllUserPosts" />
+        <item itemvalue="JUnit.UserPostServiceImplTest.testCreatePost" />
+        <item itemvalue="JUnit.UserServiceHelperTest.testGetUserByMailIdOnError" />
+        <item itemvalue="JUnit.UserServiceHelperTest.testGetUserByMailId" />
       </list>
     </recent_temporary>
   </component>
@@ -163,7 +223,84 @@
       <option name="project" value="LOCAL" />
       <updated>1669066866046</updated>
     </task>
-    <option name="localTasksCounter" value="2" />
+    <task id="LOCAL-00002" summary="Added validations">
+      <created>1669129041750</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1669129041750</updated>
+    </task>
+    <task id="LOCAL-00003" summary="logback changes&#10;and removed unwanted deps">
+      <created>1669131632856</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1669131632856</updated>
+    </task>
+    <task id="LOCAL-00004" summary="removed imports">
+      <created>1669131674211</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1669131674211</updated>
+    </task>
+    <task id="LOCAL-00005" summary="removed try-catch">
+      <created>1669132125387</created>
+      <option name="number" value="00005" />
+      <option name="presentableId" value="LOCAL-00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1669132125387</updated>
+    </task>
+    <task id="LOCAL-00006" summary="added helper classes">
+      <created>1669140238601</created>
+      <option name="number" value="00006" />
+      <option name="presentableId" value="LOCAL-00006" />
+      <option name="project" value="LOCAL" />
+      <updated>1669140238601</updated>
+    </task>
+    <task id="LOCAL-00007" summary="Removed unwanted code">
+      <created>1669140698318</created>
+      <option name="number" value="00007" />
+      <option name="presentableId" value="LOCAL-00007" />
+      <option name="project" value="LOCAL" />
+      <updated>1669140698318</updated>
+    </task>
+    <task id="LOCAL-00008" summary="removed unwanted files">
+      <created>1669141029367</created>
+      <option name="number" value="00008" />
+      <option name="presentableId" value="LOCAL-00008" />
+      <option name="project" value="LOCAL" />
+      <updated>1669141029367</updated>
+    </task>
+    <task id="LOCAL-00009" summary="removed unwanted files">
+      <created>1669142737192</created>
+      <option name="number" value="00009" />
+      <option name="presentableId" value="LOCAL-00009" />
+      <option name="project" value="LOCAL" />
+      <updated>1669142737192</updated>
+    </task>
+    <task id="LOCAL-00010" summary="rename method">
+      <created>1669142853441</created>
+      <option name="number" value="00010" />
+      <option name="presentableId" value="LOCAL-00010" />
+      <option name="project" value="LOCAL" />
+      <updated>1669142853441</updated>
+    </task>
+    <task id="LOCAL-00011" summary="added unit tests">
+      <created>1669159583431</created>
+      <option name="number" value="00011" />
+      <option name="presentableId" value="LOCAL-00011" />
+      <option name="project" value="LOCAL" />
+      <updated>1669159583432</updated>
+    </task>
+    <task id="LOCAL-00012" summary="Added swagger doc">
+      <created>1669193672458</created>
+      <option name="number" value="00012" />
+      <option name="presentableId" value="LOCAL-00012" />
+      <option name="project" value="LOCAL" />
+      <updated>1669193672458</updated>
+    </task>
+    <option name="localTasksCounter" value="13" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -179,45 +316,75 @@
   </component>
   <component name="VcsManagerConfiguration">
     <MESSAGE value="initial commit" />
-    <option name="LAST_COMMIT_MESSAGE" value="initial commit" />
+    <MESSAGE value="Added validations" />
+    <MESSAGE value="logback changes&#10;and removed unwanted deps" />
+    <MESSAGE value="removed imports" />
+    <MESSAGE value="removed try-catch" />
+    <MESSAGE value="added helper classes" />
+    <MESSAGE value="Removed unwanted code" />
+    <MESSAGE value="removed unwanted files" />
+    <MESSAGE value="rename method" />
+    <MESSAGE value="added unit tests" />
+    <MESSAGE value="Added swagger doc" />
+    <option name="LAST_COMMIT_MESSAGE" value="Added swagger doc" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
       <breakpoints>
         <line-breakpoint type="java-line">
           <url>file://$PROJECT_DIR$/src/main/java/com/techdisqus/service/UserPostServiceImpl.java</url>
-          <line>274</line>
-          <option name="timeStamp" value="25" />
-        </line-breakpoint>
-        <line-breakpoint type="java-line">
-          <url>file://$PROJECT_DIR$/src/main/java/com/techdisqus/service/UserPostServiceImpl.java</url>
-          <line>89</line>
+          <line>79</line>
           <option name="timeStamp" value="29" />
-        </line-breakpoint>
-        <line-breakpoint type="java-line">
-          <url>file://$PROJECT_DIR$/src/main/java/com/techdisqus/service/UserPostServiceImpl.java</url>
-          <line>311</line>
-          <option name="timeStamp" value="30" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/src/main/java/com/techdisqus/config/UnprocessableEntityMapper.java</url>
-          <line>15</line>
-          <option name="timeStamp" value="31" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/src/main/java/com/techdisqus/service/UserPostServiceImpl.java</url>
-          <line>225</line>
-          <option name="timeStamp" value="35" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/src/main/java/com/techdisqus/exceptions/GlobalExceptionHandler.java</url>
-          <line>42</line>
+          <line>50</line>
           <option name="timeStamp" value="36" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/src/main/java/com/techdisqus/exceptions/GlobalExceptionHandler.java</url>
-          <line>62</line>
+          <line>66</line>
           <option name="timeStamp" value="39" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/test/java/com/techdisqus/service/UserPostServiceHelperTest.java</url>
+          <line>87</line>
+          <option name="timeStamp" value="41" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/main/java/com/techdisqus/service/UserPostServiceHelper.java</url>
+          <line>150</line>
+          <option name="timeStamp" value="42" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/test/java/com/techdisqus/service/UserPostServiceHelperTest.java</url>
+          <line>97</line>
+          <option name="timeStamp" value="46" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/test/java/com/techdisqus/service/UserServiceHelperTest.java</url>
+          <line>192</line>
+          <option name="timeStamp" value="49" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/test/java/com/techdisqus/service/UserServiceHelperTest.java</url>
+          <line>157</line>
+          <option name="timeStamp" value="51" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/test/java/com/techdisqus/service/UserPostServiceImplTest.java</url>
+          <line>55</line>
+          <option name="timeStamp" value="52" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/main/java/com/techdisqus/service/UserPostServiceImpl.java</url>
+          <line>84</line>
+          <option name="timeStamp" value="55" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/test/java/com/techdisqus/service/UserPostServiceImplTest.java</url>
+          <line>74</line>
+          <option name="timeStamp" value="56" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>
@@ -227,9 +394,32 @@
       </pinned-members>
     </pin-to-top-manager>
     <watches-manager>
+      <configuration name="JUnit">
+        <watch expression="response.getStatus()" language="JAVA" />
+      </configuration>
       <configuration name="com.poratu.idea.plugins.tomcat">
         <watch expression="userPosts.entrySet().stream().filter((en) -&gt; en.getValue().size() &gt; 1).map(en -&gt; en.getKey()).collect(Collectors.toList())" language="JAVA" custom="java.util.stream.Collectors" />
       </configuration>
     </watches-manager>
+  </component>
+  <component name="com.intellij.coverage.CoverageDataManagerImpl">
+    <SUITE FILE_PATH="coverage/rest_client_backend$UserPostServiceHelperTest_testGetUserPostListOnError.ic" NAME="UserPostServiceHelperTest.testGetUserPostListOnError Coverage Results" MODIFIED="1669152567023" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="idea" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false">
+      <FILTER>com.techdisqus.service.*</FILTER>
+    </SUITE>
+    <SUITE FILE_PATH="coverage/rest_client_backend$UserServiceHelperTest_testCreateUser.ic" NAME="UserServiceHelperTest.testCreateUser Coverage Results" MODIFIED="1669154946518" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="idea" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false">
+      <FILTER>com.techdisqus.service.*</FILTER>
+    </SUITE>
+    <SUITE FILE_PATH="coverage/rest_client_backend$UserPostServiceHelperTest.ic" NAME="UserPostServiceHelperTest Coverage Results" MODIFIED="1669152152251" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="idea" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false">
+      <FILTER>com.techdisqus.service.*</FILTER>
+    </SUITE>
+    <SUITE FILE_PATH="coverage/rest_client_backend$com_techdisqus_service_in_rest_client_backend.ic" NAME="com.techdisqus.service in rest-client-backend Coverage Results" MODIFIED="1669159546216" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="idea" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false">
+      <FILTER>com.techdisqus.service.*</FILTER>
+    </SUITE>
+    <SUITE FILE_PATH="coverage/rest_client_backend$UserPostServiceHelperTest_testCreatePost.ic" NAME="UserPostServiceHelperTest.testCreatePost Coverage Results" MODIFIED="1669153630787" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="idea" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false">
+      <FILTER>com.techdisqus.service.*</FILTER>
+    </SUITE>
+    <SUITE FILE_PATH="coverage/rest_client_backend$UserServiceHelperTest_testGetUserByMailIdOnError.ic" NAME="UserServiceHelperTest.testGetUserByMailIdOnError Coverage Results" MODIFIED="1669157120082" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="idea" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false">
+      <FILTER>com.techdisqus.service.*</FILTER>
+    </SUITE>
   </component>
 </project>

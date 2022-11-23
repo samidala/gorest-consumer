@@ -76,14 +76,19 @@ public class UserPostServiceImpl implements UserPostService{
         List<Future<List<UserDto>>> userFutures = userServiceHelper.getUserListFutures();
         List<Future<List<UserPostDto>>> postsFutures = userPostServiceHelper.getUserPostsFutures();
         List<UserDto> userDtos = userServiceHelper.getUserList(userFutures);
+        log.info("userDtos size {} ",userDtos.size());
         Map<Long, UserDto> userToIdMapping = userDtos.stream().collect(Collectors.toMap(
                                                 UserDto::getId, Function.identity()));
         List<UserPostDto> posts = userPostServiceHelper.getUserPostList(postsFutures);
+        log.info("user posts size {} ",posts.size());
         UserPostsResponse userPostsResponse = new UserPostsResponse();
         Map<Long,Set<UserPostDetails>> userPosts = transformUserPostsResponse(posts, userToIdMapping,userPostsResponse);
         userPostsResponse.setUsersWithPosts(userPosts.size());
         userPostsResponse.setUsersWithoutPosts(userDtos.size() - userPosts.size());
         userPostsResponse.setUserPosts(userPosts);
+        log.info("user posts {} usersWithPosts {} usersWithoutPosts {} and postsWithoutUser {} ",
+                userPosts.size(),userPostsResponse.getUsersWithPosts(),userPostsResponse.getPostsWithoutUsers(),
+                userPostsResponse.getPostsWithoutUsers());
         return userPostsResponse;
 
     }

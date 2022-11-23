@@ -141,7 +141,7 @@ public class UserPostServiceImplTest {
     }
     private UserDto getUserDto(int i) {
         UserDto userDto = new UserDto();
-        userDto.setId(i);
+        userDto.setId((long) i);
         userDto.setEmail("me@me.com");
         userDto.setGender("MALE");
         userDto.setStatus("Active");

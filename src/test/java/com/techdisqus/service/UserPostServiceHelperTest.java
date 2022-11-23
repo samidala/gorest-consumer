@@ -159,7 +159,7 @@ public class UserPostServiceHelperTest {
     private UserDto getUserDto() {
         UserDto userDto = new UserDto();
         userDto.setEmail("me@me.com");
-        userDto.setId(123);
+        userDto.setId(123L);
         return userDto;
     }
 

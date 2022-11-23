@@ -16,5 +16,6 @@ import java.util.Set;
 public class ErrorDetails {
     private Map<String,String> errorCodes;
     private String error;
+    private String errorCode;
     private Collection<String> errors;
 }

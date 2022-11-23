@@ -11,7 +11,7 @@ import java.util.Objects;
 @Setter
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class UserDto {
-    private long id;
+    private Long id;
     private String email;
 
     private String name;
@@ -34,7 +34,7 @@ public class UserDto {
     public static UserDto toUser(CreatePostRequest request){
         UserDto userDto = new UserDto();
         userDto.email = request.getEmail();
-        userDto.gender = request.getGender().name();
+        userDto.gender = request.getGender() != null ? request.getGender().name() : null;
         userDto.name = request.getName();
         userDto.status = "active";
         return userDto;

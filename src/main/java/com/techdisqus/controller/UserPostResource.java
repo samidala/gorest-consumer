@@ -39,8 +39,7 @@ public class UserPostResource {
             @ApiResponse(code = 400, message = "Invalid input")
     })
     @PostMapping(value = "/createpost",consumes = {MediaType.APPLICATION_JSON_VALUE}, produces = {MediaType.APPLICATION_JSON_VALUE})
-    public ResponseEntity<UserPostDetails> createUserPost(
-                                                      @RequestBody @Valid CreatePostRequest createPostRequest){
+    public ResponseEntity<UserPostDetails> createUserPost(@Valid @RequestBody  CreatePostRequest createPostRequest){
         return ResponseEntity.ok(userPostService.createPost(createPostRequest));
     }
 

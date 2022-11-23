@@ -2,6 +2,8 @@ package com.techdisqus.service;
 
 import com.techdisqus.exceptions.ErrorCodes;
 import com.techdisqus.exceptions.RequestExecutionException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -14,9 +16,10 @@ import javax.ws.rs.core.Response;
 @Component
 public class RestHelperUtils {
 
+    private static Logger log = LoggerFactory.getLogger(RestHelperUtils.class);
     @Autowired
     private Client client;
-
+    //required for mocking
     public void setClient(Client client) {
         this.client = client;
     }
@@ -34,7 +37,7 @@ public class RestHelperUtils {
     }
 
     /**
-     * fetches the count of users from target system
+     * fetches the count of entities ( users or posts) from target system
      * @param url
      * @return
      */
@@ -43,6 +46,9 @@ public class RestHelperUtils {
         Invocation.Builder invocationBuilder = webTarget.request(MediaType.APPLICATION_JSON);
         javax.ws.rs.core.Response response = invocationBuilder.get();
         RestHelperUtils.checkResponseStatus(response, ErrorCodes.ERROR_WHILE_GETTING_COUNT);
+        //assuming the service always provides the total count
+        int count = Integer.parseInt(response.getHeaders().get("x-pagination-total").get(0).toString());
+        log.debug("url {} and count {} ",url,count);
         return Integer.parseInt(response.getHeaders().get("x-pagination-total").get(0).toString());
     }
 

@@ -28,7 +28,6 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 @Component
 public class UserServiceHelper {
-
     @Value("${service.find.user.by.mail.url}")
     private String findUserByMailUrl;
     @Autowired
@@ -46,8 +45,7 @@ public class UserServiceHelper {
     private String accessToken;
     @Autowired
     private ExecutorService executorService;
-
-    @Autowired
+   @Autowired
     private RestHelperUtils restHelperUtils;
 
     /**
@@ -68,8 +66,6 @@ public class UserServiceHelper {
             throw new RequestExecutionException(e,ErrorCodes.ERROR_FETCHING_USERS);
         }
     }
-
-
     /**
      * process the user futures and returns the user list
      * @param userFutures
@@ -93,18 +89,17 @@ public class UserServiceHelper {
      * @return
      */
     public UserDto createUser(CreatePostRequest request){
+        log.info("creating user with email id {} ",request.getEmail());
         WebTarget webTarget = client.target(userCreateUrl);
         Invocation.Builder invocationBuilder =  webTarget.request(MediaType.APPLICATION_JSON);
         invocationBuilder.header("Authorization","Bearer "+accessToken);
-        UserDto userDto;
         UserDto user = UserDto.toUser(request);
         validateEntity(user);
-        Response resp = invocationBuilder.post(Entity.entity(user,
-                                    MediaType.APPLICATION_JSON));
+        Response resp = invocationBuilder.post(Entity.entity(user, MediaType.APPLICATION_JSON));
         restHelperUtils.validateCreateResponse(resp,ErrorCodes.ERROR_CREATING_USER);
-        userDto = resp.readEntity(UserDto.class);
-        log.debug("user created successfully for email id {} and id is {}",request.getEmail(), userDto.getId());
-        return userDto;
+        UserDto result = resp.readEntity(UserDto.class);
+        log.info("user created successfully for email id {} and id is {}",request.getEmail(), result.getId());
+        return result;
     }
     /**
      * Query target system by email ID and return optional of user
@@ -116,12 +111,11 @@ public class UserServiceHelper {
         javax.ws.rs.core.Response resp = invocationBuilder.get();
         RestHelperUtils.checkResponseStatus(resp,ErrorCodes.ERROR_VALIDATING_EMAIL);
         List<UserDto> userDtos = resp.readEntity(new GenericType<List<UserDto>>() {});
-
         Optional<UserDto> optionalUser = userDtos == null || userDtos.isEmpty() ?
                 Optional.empty() : userDtos.stream().filter(userDto -> userDto.getEmail().equals(emailId)).findFirst();
         log.info("user exists {} for email id {}",optionalUser.isPresent(),emailId);
-        return userDtos == null || userDtos.isEmpty() ? Optional.empty() : userDtos.stream().filter(userDto -> userDto.getEmail().equals(emailId)).findFirst();
-
+        return userDtos == null || userDtos.isEmpty() ? Optional.empty() :
+                userDtos.stream().filter(userDto -> userDto.getEmail().equals(emailId)).findFirst();
     }
 
     /**
@@ -143,16 +137,12 @@ public class UserServiceHelper {
      */
     private void validateEntity(UserDto userDto) {
         Set<ErrorCodes> errorCodes = new HashSet<>();
-        if(!StringUtils.hasText(userDto.getEmail())){
-            errorCodes.add(ErrorCodes.ERROR_MISSING_EMAIL);
-        }
-        if(userDto.getGender() == null){
-            errorCodes.add(ErrorCodes.ERROR_MISSING_GENDER);
-        }
-        if(!StringUtils.hasText(userDto.getName())){
-            errorCodes.add(ErrorCodes.ERROR_MISSING_NAME);
-        }
+        if(!StringUtils.hasText(userDto.getEmail())) errorCodes.add(ErrorCodes.ERROR_MISSING_EMAIL);
+        if(userDto.getGender() == null) errorCodes.add(ErrorCodes.ERROR_MISSING_GENDER);
+        if(!StringUtils.hasText(userDto.getName())) errorCodes.add(ErrorCodes.ERROR_MISSING_NAME);
+        log.info("has validation errors {} and email id {} ",errorCodes.isEmpty(),userDto.getEmail());
         if(!errorCodes.isEmpty()){
+            log.info("user input validation errors {} and email id {} ",errorCodes,userDto.getEmail());
             throw new InvalidInputException(errorCodes);
         }
     }

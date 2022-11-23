@@ -13,6 +13,8 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
+import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
+import org.springframework.validation.beanvalidation.MethodValidationPostProcessor;
 import springfox.documentation.builders.PathSelectors;
 import springfox.documentation.builders.RequestHandlerSelectors;
 import springfox.documentation.service.ApiInfo;
@@ -28,17 +30,16 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 @Configuration
-@PropertySource("classpath:application.properties")
 @ComponentScan(basePackages = {"com.techdisqus"})
-//@EnableSwagger2WebMvc
 @EnableSwagger2
+@PropertySource("classpath:application.properties")
 public class AppConfig implements DisposableBean {
 
-    @Value("${thread.pool.count}")
-    private int count;
+
     @Value("${rest.service.connect.timeout.inmillis}")
     private int connectTimeOutInMills;
-
+    @Value("${thread.pool.count}")
+    private int count;
     @Value("${rest.service.read.timeout.inmillis}")
     private int readTimeOutInMills;
 
@@ -139,4 +140,15 @@ public class AppConfig implements DisposableBean {
                 Collections.emptyList());
     }
 
+    /*@Bean
+    public MethodValidationPostProcessor getMethodValidationPostProcessor(){
+        MethodValidationPostProcessor processor = new MethodValidationPostProcessor();
+        processor.setValidator(this.validator());
+        return processor;
+    }
+
+    @Bean
+    public LocalValidatorFactoryBean validator(){
+        return new LocalValidatorFactoryBean();
+    }*/
 }
