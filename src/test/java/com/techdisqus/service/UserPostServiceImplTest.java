@@ -75,7 +75,7 @@ public class UserPostServiceImplTest {
         assertEquals(1,res.getUserPosts().size());
         assertEquals(99,res.getUsersWithoutPosts());
         assertEquals(1,res.getUsersWithPosts());
-        assertEquals(200,res.getPostsWithoutUsers());
+        assertEquals(0,res.getPostsWithoutUsers());
     }
 
     private List<Future<List<UserPostDto>>> getUserPostsFutures(){

@@ -124,8 +124,9 @@ public class UserPostServiceImpl implements UserPostService{
                                           UserPostsResponse userPostsResponse) {
         UserDto userDto = EMPTY;
         if(post.getUserId() != null) {
-            userPostsResponse.incrementPostsWithoutUsers();
             userDto = userToIdMapping.getOrDefault(post.getUserId(), EMPTY);
+        }else {
+            userPostsResponse.incrementPostsWithoutUsers();
         }
         return buildResponse(post, userDto);
     }
