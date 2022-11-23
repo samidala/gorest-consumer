@@ -15,7 +15,6 @@ import java.util.Set;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class ErrorDetails {
     private Map<String,String> errorCodes;
-    private String error;
     private String errorCode;
     private Collection<String> errors;
 }

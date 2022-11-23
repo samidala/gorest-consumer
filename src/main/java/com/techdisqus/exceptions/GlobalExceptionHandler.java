@@ -17,6 +17,7 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 import javax.annotation.PostConstruct;
 import javax.validation.ConstraintViolationException;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
@@ -37,9 +38,11 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler  {
         StringBuilder sb = new StringBuilder();
         ex.getConstraintViolations().forEach(con -> sb.append(con.getMessage()));
         log.error("error details, constraints failed {} ",sb,ex);
+        Set<String> errors = new HashSet<>();
+        errors.add(ex.getConstraintViolations().toString());
         return new ResponseEntity<>(
                 ErrorDetails.builder()
-                        .error(ex.getConstraintViolations().toString())
+                        .errors(errors)
                         .errorCodes(errorCodesInfo)
                         .build(), HttpStatus.BAD_REQUEST);
     }
@@ -98,12 +101,9 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler  {
      * @return
      */
     private ResponseEntity<Object> response(ErrorCodes errorCodes, HttpStatus status){
-        return new ResponseEntity<>(
-                ErrorDetails.builder()
-                        .error(getError(errorCodes))
-                        .errorCodes(errorCodesInfo)
-                        .errorCode(errorCodes.getErrorCode())
-                        .build(), status);
+        Set<ErrorCodes> errors = new HashSet<>();
+        errors.add(errorCodes);
+        return response(errorCodes,status);
     }
 
     /**
@@ -115,10 +115,14 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler  {
     private ResponseEntity<Object> response(Set<ErrorCodes> errors, HttpStatus status){
         return new ResponseEntity<>(
                 ErrorDetails.builder()
-                        .errors(errors.stream().map(this::getError)
-                                .collect(Collectors.toSet()))
+                        .errors(toErrorDetails(errors))
                         .errorCodes(errorCodesInfo)
                         .build(), status);
+    }
+
+    private Set<String> toErrorDetails(Set<ErrorCodes> errors) {
+        return errors.stream().map(this::getError)
+                .collect(Collectors.toSet());
     }
 
 
