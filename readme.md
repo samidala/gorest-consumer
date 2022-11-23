@@ -40,7 +40,7 @@
 ## Junits
 1. Added few junits for unit testing and uses mockito to mock REST service calls.
 
-## other configs
+## Other configs
 1. All the target endpoints are configured in `application.properties`.
 2. Http connection pooling is configured in `application.properties`.
 3. Max routes and max no of routes per route is configured in `application.properties`.
