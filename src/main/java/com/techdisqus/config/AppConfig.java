@@ -140,15 +140,4 @@ public class AppConfig implements DisposableBean {
                 Collections.emptyList());
     }
 
-    /*@Bean
-    public MethodValidationPostProcessor getMethodValidationPostProcessor(){
-        MethodValidationPostProcessor processor = new MethodValidationPostProcessor();
-        processor.setValidator(this.validator());
-        return processor;
-    }
-
-    @Bean
-    public LocalValidatorFactoryBean validator(){
-        return new LocalValidatorFactoryBean();
-    }*/
 }

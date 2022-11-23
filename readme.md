@@ -44,7 +44,10 @@
 1. All the target endpoints are configured in `application.properties`.
 2. Http connection pooling is configured in `application.properties`.
 3. Max routes and max no of routes per route is configured in `application.properties`.
-   1.  
+4. The application uses `ApacheConnectorProvider` and `PoolingHttpClientConnectionManager`
+   1. This can be customizable as per needs
+   2. the connection time out and read timeout are configured from `application.properties`
+   3. extendable to configure `socket timeout`
 ## Known issues and improvements
 1. There is **known issue** that target system does **not** return the email though it exists and the creating the post in target system fails.
 2. Validation in controller layer is not implemented however validations are present in service layer.
