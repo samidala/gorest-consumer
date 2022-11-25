@@ -14,7 +14,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
-import javax.ws.rs.client.Client;
 import javax.ws.rs.core.GenericType;
 import javax.ws.rs.core.MediaType;
 import java.util.ArrayList;
@@ -35,9 +34,6 @@ public class UserPostServiceHelper {
     private static Logger log = LoggerFactory.getLogger(UserPostServiceHelper.class);
     @Value("${service.all.list.url}")
     private String allPostsUrl;
-
-    @Autowired
-    private Client client;
 
     @Value("${service.count.per.page}")
     private String countPerPage;
@@ -103,17 +99,6 @@ public class UserPostServiceHelper {
         }
     }
 
-    private void validateUserPost(CreatePostRequest request,UserDto userDto){
-        Set<ErrorCodes> errorCodes = new HashSet<>();
-        if(!StringUtils.hasText(request.getBody())) errorCodes.add(ErrorCodes.ERROR_BODY_SHOULDNT_BE_EMPTY);
-        if(!StringUtils.hasText(request.getTitle())) errorCodes.add(ErrorCodes.ERROR_TITLE_SHOULDNT_BE_EMPTY);
-        if(userDto.getId() == null) errorCodes.add(ErrorCodes.ERROR_USER_ID_MISSING);
-        log.warn("request validation status {} and errors {} ",errorCodes.isEmpty(),errorCodes);
-        if(!errorCodes.isEmpty())
-            throw new InvalidInputException(errorCodes);
-    }
-
-
 
     /**
      * process the future objects and creates the user posts.
@@ -138,7 +123,7 @@ public class UserPostServiceHelper {
      * @param counter
      * @return
      */
-    protected List<UserPostDto> prepareUserPostsGetCallAndExecute(AtomicInteger counter) {
+    private List<UserPostDto> prepareUserPostsGetCallAndExecute(AtomicInteger counter) {
         String url = allPostsUrl
                 + "?per_page=" + countPerPage + "&page=" + counter.getAndIncrement();
         log.info("url for getting user posts {}",url);
@@ -148,5 +133,20 @@ public class UserPostServiceHelper {
         } catch (RequestExecutionException e){
             throw new RequestExecutionException(e,ErrorCodes.ERROR_FETCHING_USER_POSTS);
         }
+    }
+
+    /**
+     * Validates the data before making REST service call.
+     * @param request
+     * @param userDto
+     */
+    private void validateUserPost(CreatePostRequest request,UserDto userDto){
+        Set<ErrorCodes> errorCodes = new HashSet<>();
+        if(!StringUtils.hasText(request.getBody())) errorCodes.add(ErrorCodes.ERROR_BODY_SHOULDNT_BE_EMPTY);
+        if(!StringUtils.hasText(request.getTitle())) errorCodes.add(ErrorCodes.ERROR_TITLE_SHOULDNT_BE_EMPTY);
+        if(userDto.getId() == null) errorCodes.add(ErrorCodes.ERROR_USER_ID_MISSING);
+        log.warn("request validation status {} and errors {} ",errorCodes.isEmpty(),errorCodes);
+        if(!errorCodes.isEmpty())
+            throw new InvalidInputException(errorCodes);
     }
 }
