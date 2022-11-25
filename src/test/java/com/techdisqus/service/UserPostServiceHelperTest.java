@@ -18,19 +18,13 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.context.web.WebAppConfiguration;
 
 import javax.ws.rs.client.Client;
-import javax.ws.rs.client.Entity;
-import javax.ws.rs.client.Invocation;
-import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.GenericType;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
-import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -67,23 +61,12 @@ public class UserPostServiceHelperTest {
         Client client = Mockito.mock(Client.class,RETURNS_DEEP_STUBS);
         restHelperUtils.setClient(client);
         userPostServiceHelper.setRestHelperUtils(restHelperUtils);
-        userPostServiceHelper.setClient(client);
-        Invocation.Builder b = Mockito.mock(Invocation.Builder.class, RETURNS_DEEP_STUBS);
-        WebTarget target = Mockito.mock(WebTarget.class,RETURNS_DEEP_STUBS);
         List<UserPostDto> userPostDtos = new ArrayList<>();
         for(int i = 1; i <=200;i++){
             userPostDtos.add(getUserPostDto(i));
         }
-
-        Response responseMock = Mockito.mock(Response.class,invocationOnMock -> Response.ok(userPostDtos).build());
-
-        when(client.target(anyString())).thenReturn(target);
-        when(target.request(APPLICATION_JSON)).thenReturn(b);
-
-        when(b.get()).thenReturn(responseMock);
         when(restHelperUtils.getCount(anyString())).thenReturn(200);
-       // when(responseMock.getStatus()).thenReturn(200);
-        when(responseMock.readEntity(any(GenericType.class))).thenReturn(userPostDtos);
+        when(restHelperUtils.executeGet(anyString(),any(GenericType.class), any())).thenReturn(userPostDtos);
         List<Future<List<UserPostDto>>> futureList = userPostServiceHelper.getUserPostsFutures();
         assertEquals(2,futureList.size());
     }
@@ -129,19 +112,10 @@ public class UserPostServiceHelperTest {
         Client client = Mockito.mock(Client.class,RETURNS_DEEP_STUBS);
         restHelperUtils.setClient(client);
         userPostServiceHelper.setRestHelperUtils(restHelperUtils);
-        userPostServiceHelper.setClient(client);
-        Invocation.Builder b = Mockito.mock(Invocation.Builder.class, RETURNS_DEEP_STUBS);
-        WebTarget target = Mockito.mock(WebTarget.class,RETURNS_DEEP_STUBS);
-        when(client.target(anyString())).thenReturn(target);
-        when(target.request(MediaType.APPLICATION_JSON)).thenReturn(b);
         CreatePostResponse createPostResponse = getCreatePostResponse();
         createPostResponse.setId(1l);
-        Response responseMock = Mockito.mock(Response.class,invocationOnMock -> Response.ok(createPostResponse).build());
-        when(b.post(any(Entity.class))).thenReturn(responseMock);
-        //when(responseMock.getStatus()).thenReturn(200);
-        when(responseMock.readEntity(CreatePostResponse.class)).thenReturn(createPostResponse);
+        when(restHelperUtils.executePost(anyString(),any(),any(Class.class),any(),any())).thenReturn(createPostResponse);
         CreatePostResponse res = userPostServiceHelper.createUserPost(createPostRequest,userDto);
-
         assertEquals(1,res.getUserId());
         assertEquals(1,res.getId());
         assertEquals("body",res.getBody());

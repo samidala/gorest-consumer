@@ -13,13 +13,15 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
 import javax.ws.rs.client.Client;
-import javax.ws.rs.client.Entity;
-import javax.ws.rs.client.Invocation;
-import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.GenericType;
 import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
@@ -90,16 +92,18 @@ public class UserServiceHelper {
      */
     public UserDto createUser(CreatePostRequest request){
         log.info("creating user with email id {} ",request.getEmail());
-        WebTarget webTarget = client.target(userCreateUrl);
-        Invocation.Builder invocationBuilder =  webTarget.request(MediaType.APPLICATION_JSON);
-        invocationBuilder.header("Authorization","Bearer "+accessToken);
-        UserDto user = UserDto.toUser(request);
-        validateEntity(user);
-        Response resp = invocationBuilder.post(Entity.entity(user, MediaType.APPLICATION_JSON));
-        restHelperUtils.validateCreateResponse(resp,ErrorCodes.ERROR_CREATING_USER);
-        UserDto result = resp.readEntity(UserDto.class);
-        log.info("user created successfully for email id {} and id is {}",request.getEmail(), result.getId());
-        return result;
+        try {
+            UserDto user = UserDto.toUser(request);
+            validateEntity(user);
+            Map<String, Object> headers = new HashMap<>();
+            headers.put("Authorization", "Bearer " + accessToken);
+            UserDto result = restHelperUtils.executePost(userCreateUrl, user, UserDto.class, headers,
+                    MediaType.APPLICATION_JSON);
+            log.info("user created successfully for email id {} and id is {}", request.getEmail(), result.getId());
+            return result;
+        }catch (RequestExecutionException e){
+            throw new RequestExecutionException(e,ErrorCodes.ERROR_CREATING_USER);
+        }
     }
     /**
      * Query target system by email ID and return optional of user
@@ -107,15 +111,18 @@ public class UserServiceHelper {
      * @return optional of user
      */
     public Optional<UserDto> getUserDetailsByMailId(String emailId)  {
-        Invocation.Builder invocationBuilder = restHelperUtils.buildRequest(findUserByMailUrl + emailId);
-        javax.ws.rs.core.Response resp = invocationBuilder.get();
-        RestHelperUtils.checkResponseStatus(resp,ErrorCodes.ERROR_VALIDATING_EMAIL);
-        List<UserDto> userDtos = resp.readEntity(new GenericType<List<UserDto>>() {});
-        Optional<UserDto> optionalUser = userDtos == null || userDtos.isEmpty() ?
-                Optional.empty() : userDtos.stream().filter(userDto -> userDto.getEmail().equals(emailId)).findFirst();
-        log.info("user exists {} for email id {}",optionalUser.isPresent(),emailId);
-        return userDtos == null || userDtos.isEmpty() ? Optional.empty() :
-                userDtos.stream().filter(userDto -> userDto.getEmail().equals(emailId)).findFirst();
+        try {
+            List<UserDto> userDtos = restHelperUtils.executeGet(findUserByMailUrl + emailId,
+                    new GenericType<List<UserDto>>() {
+                    }, MediaType.APPLICATION_JSON);
+            Optional<UserDto> optionalUser = userDtos == null || userDtos.isEmpty() ?
+                    Optional.empty() : userDtos.stream().filter(userDto -> userDto.getEmail().equals(emailId)).findFirst();
+            log.info("user exists {} for email id {}", optionalUser.isPresent(), emailId);
+            return userDtos == null || userDtos.isEmpty() ? Optional.empty() :
+                    userDtos.stream().filter(userDto -> userDto.getEmail().equals(emailId)).findFirst();
+        }catch (RequestExecutionException e){
+            throw new RequestExecutionException(e,ErrorCodes.ERROR_VALIDATING_EMAIL);
+        }
     }
 
     /**
@@ -126,9 +133,13 @@ public class UserServiceHelper {
     private List<UserDto> getUsersFromTargetSystem(AtomicInteger counter) {
         String url = userListUrl+"?per_page="+countPerPage+"&page="+ counter.getAndIncrement();
         log.debug("url::: {}",url);
-        Response response = restHelperUtils.buildRequest(url).get();
-        RestHelperUtils.checkResponseStatus(response, ErrorCodes.ERROR_WHILE_GETTING_COUNT);
-        return response.readEntity(new GenericType<List<UserDto>>() {});
+        try {
+            return restHelperUtils.executeGet(url, new GenericType<List<UserDto>>() {
+            }, MediaType.APPLICATION_JSON);
+        }catch (RequestExecutionException e){
+            throw new RequestExecutionException(e,ErrorCodes.ERROR_FETCHING_USERS);
+        }
+
     }
 
     /**
@@ -151,7 +162,5 @@ public class UserServiceHelper {
         this.restHelperUtils = restHelperUtils;
     }
 
-    public void setClient(Client client) {
-        this.client = client;
-    }
+
 }

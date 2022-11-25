@@ -15,15 +15,14 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
 import javax.ws.rs.client.Client;
-import javax.ws.rs.client.Entity;
-import javax.ws.rs.client.Invocation;
-import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.GenericType;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
@@ -59,10 +58,7 @@ public class UserPostServiceHelper {
     protected void setRestHelperUtils(RestHelperUtils restHelperUtils) {
         this.restHelperUtils = restHelperUtils;
     }
-    //Useful for setting mock objects
-    protected void setClient(Client client) {
-        this.client = client;
-    }
+
 
     /**
      * Invokes userposts read call in batches in multiple threads
@@ -94,19 +90,20 @@ public class UserPostServiceHelper {
      * @return
      */
     public CreatePostResponse createUserPost(CreatePostRequest request, UserDto userDto) {
-
-        WebTarget webTarget = client.target(userPostUrl.replace("${userId}", userDto.getId()+""));//.path("employees");
-        Invocation.Builder invocationBuilder =  webTarget.request(MediaType.APPLICATION_JSON);
-        invocationBuilder.header("Authorization","Bearer "+accessToken);
         validateUserPost(request,userDto);
-        Response resp = invocationBuilder
-                .post(Entity.entity(UserPostDto.toUserPost(request),
-                MediaType.APPLICATION_JSON_TYPE));
-        restHelperUtils.validateCreateResponse(resp,ErrorCodes.ERROR_CREATING_USER_POST);
-        CreatePostResponse createPostResponse = resp.readEntity(CreatePostResponse.class);
-        log.info("response id {} for title {}",createPostResponse.getId(),createPostResponse.getTitle());
-        log.debug("response {} ",createPostResponse);
-        return createPostResponse;
+        Map<String, Object> headers = new HashMap<>();
+        headers.put("Authorization","Bearer "+accessToken);
+        try {
+            CreatePostResponse createPostResponse = restHelperUtils.executePost(userPostUrl.replace("${userId}", userDto.getId() + ""),
+                    UserPostDto.toUserPost(request), CreatePostResponse.class, headers,
+                    MediaType.APPLICATION_JSON);
+
+            log.info("response id {} for title {}", createPostResponse.getId(), createPostResponse.getTitle());
+            log.debug("response {} ", createPostResponse);
+            return createPostResponse;
+        }catch (RequestExecutionException e){
+            throw new RequestExecutionException(e,ErrorCodes.ERROR_CREATING_USER_POST);
+        }
     }
 
     private void validateUserPost(CreatePostRequest request,UserDto userDto){

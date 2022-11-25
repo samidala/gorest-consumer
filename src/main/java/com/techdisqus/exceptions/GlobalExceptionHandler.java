@@ -103,7 +103,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler  {
     private ResponseEntity<Object> response(ErrorCodes errorCodes, HttpStatus status){
         Set<ErrorCodes> errors = new HashSet<>();
         errors.add(errorCodes);
-        return response(errorCodes,status);
+        return response(errors,status);
     }
 
     /**

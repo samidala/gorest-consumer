@@ -44,7 +44,8 @@ public enum ErrorCodes {
     ERROR_TITLE_SHOULDNT_BE_GT_SIZE("1409","Post title length should be less than 100"),
     ERROR_USER_ID_MISSING("1410","missing user id"),
 
-    INTERNAL_SERVER_ERROR("1500","Internal server error")
+    INTERNAL_SERVER_ERROR("1500","Internal server error"),
+    ERROR_REQ_FAILED_AT_TARGET_SYSTEM("1501","Request failed at target system")
     ;
     private final String errorCode;
     private final Map<String,String> errorDetails = new HashMap<>();
