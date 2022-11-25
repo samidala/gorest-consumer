@@ -1,7 +1,6 @@
 package com.techdisqus.service;
 
 import com.techdisqus.config.AppConfig;
-import com.techdisqus.dto.CreatePostRequest;
 import com.techdisqus.exceptions.RequestExecutionException;
 import com.techdisqus.rest.dto.UserDto;
 import lombok.SneakyThrows;
@@ -23,9 +22,10 @@ import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
 
+import static com.techdisqus.service.TestHelperUtils.getCreatePostRequest;
+import static com.techdisqus.service.TestHelperUtils.getUserDto;
+import static com.techdisqus.service.TestHelperUtils.getUserDtoList;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -79,39 +79,10 @@ public class UserServiceHelperTest {
     @Test
     public void testGetUserList() {
         List<Future<List<UserDto>>> userFutures  = new ArrayList<>();
-        userFutures.add(getFuture(getUserDtoList()));
-        userFutures.add(getFuture(getUserDtoList()));
+        userFutures.add(TestHelperUtils.getFuture(getUserDtoList()));
+        userFutures.add(TestHelperUtils.getFuture(getUserDtoList()));
         List<UserDto> userDtos = userServiceHelper.getUserList(userFutures);
         assertEquals(200,userDtos.size());
-    }
-
-    private Future<List<UserDto>> getFuture(List<UserDto> userDtoList) {
-        return new Future<List<UserDto>>() {
-            @Override
-            public boolean cancel(boolean mayInterruptIfRunning) {
-                return false;
-            }
-
-            @Override
-            public boolean isCancelled() {
-                return false;
-            }
-
-            @Override
-            public boolean isDone() {
-                return false;
-            }
-
-            @Override
-            public List<UserDto> get() throws InterruptedException, ExecutionException {
-                return userDtoList;
-            }
-
-            @Override
-            public List<UserDto> get(long timeout, TimeUnit unit) throws InterruptedException, ExecutionException, TimeoutException {
-                return null;
-            }
-        };
     }
 
     @Test
@@ -134,7 +105,6 @@ public class UserServiceHelperTest {
 
     @Test
     public void testGetUserByMailIdOnError(){
-        UserDto userDto = getUserDto(1);
         RestHelperUtils restHelperUtils =  Mockito.mock(RestHelperUtils.class,RETURNS_DEEP_STUBS);
         Client client = Mockito.mock(Client.class,RETURNS_DEEP_STUBS);
         restHelperUtils.setClient(client);
@@ -172,30 +142,6 @@ public class UserServiceHelperTest {
         assertEquals(1,res.getId());
         assertEquals(userDto.getName(),res.getName());
         assertEquals(userDto.getGender(),res.getGender());
-    }
-    private List<UserDto> getUserDtoList(){
-        List<UserDto> userDtos = new ArrayList<>(200);
-        for(int i = 1; i <= 100; i++){
-            userDtos.add(getUserDto(i));
-        }
-        return userDtos;
-    }
-    private UserDto getUserDto(int i) {
-        UserDto userDto = new UserDto();
-        userDto.setId((long) i);
-        userDto.setEmail("me@me.com");
-
-        return userDto;
-    }
-
-    private CreatePostRequest getCreatePostRequest() {
-        CreatePostRequest createPostRequest = new CreatePostRequest();
-        createPostRequest.setBody("body");
-        createPostRequest.setTitle("title");
-        createPostRequest.setGender(CreatePostRequest.Gender.MALE);
-        createPostRequest.setEmail("me@me.com");
-        createPostRequest.setName("name");
-        return createPostRequest;
     }
 
 }

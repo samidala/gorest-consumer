@@ -24,9 +24,12 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
 
+import static com.techdisqus.service.TestHelperUtils.getCreatePostRequest;
+import static com.techdisqus.service.TestHelperUtils.getCreatePostResponse;
+import static com.techdisqus.service.TestHelperUtils.getUserDto;
+import static com.techdisqus.service.TestHelperUtils.getUserPostDto;
+import static com.techdisqus.service.TestHelperUtils.getUserPostDtos;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -81,8 +84,9 @@ public class UserPostServiceHelperTest {
     @Test
     public void testGetUserPostList() {
         List<Future<List<UserPostDto>>> postFeatures  = new ArrayList<>();
-        postFeatures.add(getFuture(getUserPostDtos()));
-        postFeatures.add(getFuture(getUserPostDtos()));
+
+        postFeatures.add(TestHelperUtils.getFuture(getUserPostDtos()));
+        postFeatures.add(TestHelperUtils.getFuture(getUserPostDtos()));
         List<UserPostDto> userPostDtos = userPostServiceHelper.getUserPostList(postFeatures);
         assertEquals(400,userPostDtos.size());
     }
@@ -123,73 +127,5 @@ public class UserPostServiceHelperTest {
         assertEquals("title",res.getTitle());
     }
 
-    private CreatePostResponse getCreatePostResponse() {
-        CreatePostResponse createPostResponse = new CreatePostResponse();
-        createPostResponse.setUserId(1);
-        createPostResponse.setBody("body");
-        createPostResponse.setTitle("title");
-        return createPostResponse;
-    }
 
-    private UserDto getUserDto() {
-        UserDto userDto = new UserDto();
-        userDto.setEmail("me@me.com");
-        userDto.setId(123L);
-        return userDto;
-    }
-
-    private CreatePostRequest getCreatePostRequest() {
-        CreatePostRequest createPostRequest = new CreatePostRequest();
-        createPostRequest.setBody("body");
-        createPostRequest.setTitle("title");
-        createPostRequest.setGender(CreatePostRequest.Gender.MALE);
-        createPostRequest.setEmail("me@me.com");
-        createPostRequest.setName("name");
-        return createPostRequest;
-    }
-
-    private List<UserPostDto> getUserPostDtos() {
-        List<UserPostDto> userPostDtos = new ArrayList<>();
-        for(int i = 1; i <=200;i++){
-            userPostDtos.add(getUserPostDto(i));
-        }
-        return userPostDtos;
-    }
-    private UserPostDto getUserPostDto(int i) {
-        UserPostDto userPostDto = new UserPostDto();
-        userPostDto.setUserId(100l);
-        userPostDto.setTitle("some title");
-        userPostDto.setBody("some body");
-        userPostDto.setId(i);
-        return userPostDto;
-    }
-
-    private Future<List<UserPostDto>> getFuture(List<UserPostDto> userDtoList) {
-        return new Future<List<UserPostDto>>() {
-            @Override
-            public boolean cancel(boolean mayInterruptIfRunning) {
-                return false;
-            }
-
-            @Override
-            public boolean isCancelled() {
-                return false;
-            }
-
-            @Override
-            public boolean isDone() {
-                return false;
-            }
-
-            @Override
-            public List<UserPostDto> get() throws InterruptedException, ExecutionException {
-                return userDtoList;
-            }
-
-            @Override
-            public List<UserPostDto> get(long timeout, TimeUnit unit) throws InterruptedException, ExecutionException, TimeoutException {
-                return null;
-            }
-        };
-    }
 }

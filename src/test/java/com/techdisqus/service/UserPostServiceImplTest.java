@@ -1,10 +1,8 @@
 package com.techdisqus.service;
 
 import com.techdisqus.config.AppConfig;
-import com.techdisqus.dto.CreatePostRequest;
 import com.techdisqus.dto.UserPostDetails;
 import com.techdisqus.dto.UserPostsResponse;
-import com.techdisqus.rest.dto.CreatePostResponse;
 import com.techdisqus.rest.dto.UserDto;
 import com.techdisqus.rest.dto.UserPostDto;
 import org.junit.jupiter.api.Test;
@@ -23,6 +21,11 @@ import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
+import static com.techdisqus.service.TestHelperUtils.getCreatePostRequest;
+import static com.techdisqus.service.TestHelperUtils.getCreatePostResponse;
+import static com.techdisqus.service.TestHelperUtils.getUserDto;
+import static com.techdisqus.service.TestHelperUtils.getUserDtoList;
+import static com.techdisqus.service.TestHelperUtils.getUserPostDtos;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.ArgumentMatchers.any;
@@ -139,54 +142,8 @@ public class UserPostServiceImplTest {
         });
         return futureList;
     }
-    private UserDto getUserDto(int i) {
-        UserDto userDto = new UserDto();
-        userDto.setId((long) i);
-        userDto.setEmail("me@me.com");
-        userDto.setGender("MALE");
-        userDto.setStatus("Active");
-        return userDto;
-    }
 
-    private CreatePostRequest getCreatePostRequest() {
-        CreatePostRequest createPostRequest = new CreatePostRequest();
-        createPostRequest.setBody("body");
-        createPostRequest.setTitle("title");
-        createPostRequest.setGender(CreatePostRequest.Gender.MALE);
-        createPostRequest.setEmail("me@me.com");
-        createPostRequest.setName("name");
-        return createPostRequest;
-    }
 
-    private List<UserDto> getUserDtoList(){
-        List<UserDto> userDtos = new ArrayList<>(200);
-        for(int i = 1; i <= 100; i++){
-            userDtos.add(getUserDto(i));
-        }
-        return userDtos;
-    }
 
-    private List<UserPostDto> getUserPostDtos() {
-        List<UserPostDto> userPostDtos = new ArrayList<>();
-        for(int i = 1; i <=200;i++){
-            userPostDtos.add(getUserPostDto(i));
-        }
-        return userPostDtos;
-    }
-    private UserPostDto getUserPostDto(int i) {
-        UserPostDto userPostDto = new UserPostDto();
-        userPostDto.setUserId(100l);
-        userPostDto.setTitle("some title");
-        userPostDto.setBody("some body");
-        userPostDto.setId(i);
-        return userPostDto;
-    }
 
-    private CreatePostResponse getCreatePostResponse() {
-        CreatePostResponse createPostResponse = new CreatePostResponse();
-        createPostResponse.setUserId(1);
-        createPostResponse.setBody("body");
-        createPostResponse.setTitle("title");
-        return createPostResponse;
-    }
 }
