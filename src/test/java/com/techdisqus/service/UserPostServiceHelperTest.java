@@ -24,6 +24,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -69,21 +71,19 @@ public class UserPostServiceHelperTest {
         when(restHelperUtils.executeGet(anyString(),any(GenericType.class), any())).thenReturn(userPostDtos);
         List<Future<List<UserPostDto>>> futureList = userPostServiceHelper.getUserPostsFutures();
         assertEquals(2,futureList.size());
+        int count = 0;
+        for(Future<List<UserPostDto>> f : futureList){
+            count+=f.get().size();
+        }
+        assertEquals(400,count);
     }
 
     @Test
-    public void testGetUserPostList() throws ExecutionException, InterruptedException {
-        ArrayList<Future<List<UserPostDto>>> mockFuture =   Mockito.mock(ArrayList.class,RETURNS_DEEP_STUBS);
-        Iterator<Future<List<UserPostDto>>> itr = Mockito.mock(Iterator.class,RETURNS_DEEP_STUBS);
-        Future<List<UserPostDto>> future = Mockito.mock(Future.class,RETURNS_DEEP_STUBS);
-        when(mockFuture.iterator()).thenReturn(itr);
-        when(itr.hasNext()).thenReturn(true,true,false);
-        when(itr.next()).thenReturn(future);
-        when(future.get()).thenReturn(getUserPostDtos(),getUserPostDtos());
-        List<UserPostDto> userPostDtos = userPostServiceHelper.getUserPostList(mockFuture);
-        for(Future<List<UserPostDto>> f : mockFuture){
-            System.out.println(f.get());
-        }
+    public void testGetUserPostList() {
+        List<Future<List<UserPostDto>>> postFeatures  = new ArrayList<>();
+        postFeatures.add(getFuture(getUserPostDtos()));
+        postFeatures.add(getFuture(getUserPostDtos()));
+        List<UserPostDto> userPostDtos = userPostServiceHelper.getUserPostList(postFeatures);
         assertEquals(400,userPostDtos.size());
     }
 
@@ -96,6 +96,7 @@ public class UserPostServiceHelperTest {
         when(itr.hasNext()).thenReturn(true,true,false);
         when(itr.next()).thenReturn(future);
         when(future.get()).thenThrow(new ExecutionException("failed execution",new Throwable()));
+
         RequestExecutionException thrown = assertThrows(
                 RequestExecutionException.class,
                 () -> userPostServiceHelper.getUserPostList(mockFuture), "failed execution");
@@ -161,5 +162,34 @@ public class UserPostServiceHelperTest {
         userPostDto.setBody("some body");
         userPostDto.setId(i);
         return userPostDto;
+    }
+
+    private Future<List<UserPostDto>> getFuture(List<UserPostDto> userDtoList) {
+        return new Future<List<UserPostDto>>() {
+            @Override
+            public boolean cancel(boolean mayInterruptIfRunning) {
+                return false;
+            }
+
+            @Override
+            public boolean isCancelled() {
+                return false;
+            }
+
+            @Override
+            public boolean isDone() {
+                return false;
+            }
+
+            @Override
+            public List<UserPostDto> get() throws InterruptedException, ExecutionException {
+                return userDtoList;
+            }
+
+            @Override
+            public List<UserPostDto> get(long timeout, TimeUnit unit) throws InterruptedException, ExecutionException, TimeoutException {
+                return null;
+            }
+        };
     }
 }

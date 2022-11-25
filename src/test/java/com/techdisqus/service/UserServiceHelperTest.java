@@ -23,6 +23,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -67,23 +69,49 @@ public class UserServiceHelperTest {
         when(restHelperUtils.executeGet(anyString(),any(GenericType.class), any())).thenReturn(userDtos);
         List<Future<List<UserDto>>> futureList = userServiceHelper.getUserListFutures();
         assertEquals(2,futureList.size());
+        int count = 0;
+        for(Future<List<UserDto>> f : futureList){
+            count+=f.get().size();
+        }
+        assertEquals(400,count);
     }
 
     @Test
-    public void testGetUserList() throws ExecutionException, InterruptedException {
-        ArrayList<Future<List<UserDto>>> mockFuture =   Mockito.mock(ArrayList.class,RETURNS_DEEP_STUBS);
-        Iterator<Future<List<UserDto>>> itr = Mockito.mock(Iterator.class,RETURNS_DEEP_STUBS);
-        Future<List<UserDto>> future = Mockito.mock(Future.class,RETURNS_DEEP_STUBS);
-        when(mockFuture.iterator()).thenReturn(itr);
-        when(itr.hasNext()).thenReturn(true,true,false);
-        when(itr.next()).thenReturn(future);
-        when(future.get()).thenReturn(getUserDtoList(),getUserDtoList());
-        List<UserDto> userDtos = userServiceHelper.getUserList(mockFuture);
-        for(Future<List<UserDto>> f : mockFuture){
-            userDtos.addAll(f.get());
-
-        }
+    public void testGetUserList() {
+        List<Future<List<UserDto>>> userFutures  = new ArrayList<>();
+        userFutures.add(getFuture(getUserDtoList()));
+        userFutures.add(getFuture(getUserDtoList()));
+        List<UserDto> userDtos = userServiceHelper.getUserList(userFutures);
         assertEquals(200,userDtos.size());
+    }
+
+    private Future<List<UserDto>> getFuture(List<UserDto> userDtoList) {
+        return new Future<List<UserDto>>() {
+            @Override
+            public boolean cancel(boolean mayInterruptIfRunning) {
+                return false;
+            }
+
+            @Override
+            public boolean isCancelled() {
+                return false;
+            }
+
+            @Override
+            public boolean isDone() {
+                return false;
+            }
+
+            @Override
+            public List<UserDto> get() throws InterruptedException, ExecutionException {
+                return userDtoList;
+            }
+
+            @Override
+            public List<UserDto> get(long timeout, TimeUnit unit) throws InterruptedException, ExecutionException, TimeoutException {
+                return null;
+            }
+        };
     }
 
     @Test
