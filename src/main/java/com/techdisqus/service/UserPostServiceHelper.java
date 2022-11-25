@@ -17,7 +17,6 @@ import org.springframework.util.StringUtils;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.core.GenericType;
 import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -29,8 +28,6 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
 import java.util.concurrent.atomic.AtomicInteger;
-
-import static com.techdisqus.service.RestHelperUtils.checkResponseStatus;
 
 @Component
 public class UserPostServiceHelper {
@@ -68,7 +65,7 @@ public class UserPostServiceHelper {
         try {
             int count = restHelperUtils.getCount(allPostsUrl);
             log.info("total user posts count {}",count);
-            int itr = RestHelperUtils.getIterationCount(count);
+            int itr = ServiceUtils.getIterationCount(count);
             log.info("total batch size {} ",itr);
             List<Callable<List<UserPostDto>>> callables = new ArrayList<>();
             AtomicInteger counter = new AtomicInteger(1);
@@ -145,9 +142,11 @@ public class UserPostServiceHelper {
         String url = allPostsUrl
                 + "?per_page=" + countPerPage + "&page=" + counter.getAndIncrement();
         log.info("url for getting user posts {}",url);
-        Response response = restHelperUtils.buildRequest(url).get();
-        checkResponseStatus(response, ErrorCodes.ERROR_FETCHING_USER_POSTS);
-        return response.readEntity(new GenericType<List<UserPostDto>>() {});
+        try{
+            return restHelperUtils.executeGet(url, new GenericType<List<UserPostDto>>() {
+            }, MediaType.APPLICATION_JSON);
+        } catch (RequestExecutionException e){
+            throw new RequestExecutionException(e,ErrorCodes.ERROR_FETCHING_USER_POSTS);
+        }
     }
-
 }

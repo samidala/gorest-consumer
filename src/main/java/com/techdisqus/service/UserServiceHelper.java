@@ -57,7 +57,7 @@ public class UserServiceHelper {
     public List<Future<List<UserDto>>> getUserListFutures() {
         try {
             int count = restHelperUtils.getCount(userListUrl);
-            int itr = RestHelperUtils.getIterationCount(count);
+            int itr = ServiceUtils.getIterationCount(count);
             List<Callable<List<UserDto>>> callables = new ArrayList<>();
             AtomicInteger counter = new AtomicInteger(1);
             for(int i = 1; i <= itr; i++){
